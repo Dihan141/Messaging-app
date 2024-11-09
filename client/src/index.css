@@ -1,0 +1,120 @@
+/* google font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;800&family=VT323&display=swap');
+
+/* layout */
+:root {
+  --primary: #1aac83;
+  --error: #e7195a;
+}
+body {
+  background: #f1f1f1;
+  height: 100%;
+  margin: 0;
+  font-family: "Poppins";
+}
+header {
+  background: #fff;
+}
+header .container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header a {
+  color: #333;
+  text-decoration: none;
+}
+.pages{
+  max-width: 1400px;
+  padding: 20px;
+  margin: 0 auto;
+}
+
+/* navbar */
+nav {
+  display: flex;
+  align-items: center;
+}
+nav a, nav button {
+  margin-left: 10px;
+}
+nav button {
+  background: #fff;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-family: "Poppins";
+  cursor: pointer;
+  font-size: 1em;
+}
+
+/* auth forms */
+form.signup, form.login {
+  max-width: 400px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 4px;
+}
+
+/* chat app */
+.chatapp {
+  display: flex;
+  /* max-width: 1400px; */
+  height: 80vh;
+  background-color: #fff;
+}
+
+.user-list {
+  width: 30%;
+  border-right: 1px solid #ddd;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.user-list::-webkit-scrollbar {
+  display: none;
+}
+
+.user-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.user-list li {
+  padding: 20px;
+  cursor: pointer;
+}
+
+.user-list li:hover {
+  background-color: #e0e0e0;
+}
+
+.search-input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  width: 95%;
+  border-radius: 4px;
+}
+
+.chat-window {
+  width: 70%;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.message-input {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
