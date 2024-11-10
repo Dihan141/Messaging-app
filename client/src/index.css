@@ -73,6 +73,7 @@ form.signup, form.login {
   width: 30%;
   border-right: 1px solid #ddd;
   padding: 20px;
+  position: relative;
   overflow-y: auto;
 }
 
@@ -99,6 +100,19 @@ form.signup, form.login {
   border: 1px solid #ddd;
   width: 95%;
   border-radius: 4px;
+}
+
+.search-overlay {
+  position: absolute;
+  top: 10%; /* Below the search input */
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 30;
 }
 
 .chat-window {
