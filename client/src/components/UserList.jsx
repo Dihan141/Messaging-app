@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-function UserList() {
+function UserList({ onUserSelect}) {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
-    const users = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy', 'Karl', 'Liz', 'Mallory', 'Nia', 'Oscar', 'Peggy', 'Quinn', 'Ruth', 'Steve', 'Trent', 'Uma', 'Victor', 'Wendy', 'Xander', 'Yvonne', 'Zane'];
+    const users = [];
+    //const users = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy', 'Karl', 'Liz', 'Mallory', 'Nia', 'Oscar', 'Peggy', 'Quinn', 'Ruth', 'Steve', 'Trent', 'Uma', 'Victor', 'Wendy', 'Xander', 'Yvonne', 'Zane'];
     const [searchValue, setSearchValue] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);  
 
@@ -35,7 +36,7 @@ function UserList() {
             <ul>
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <li key={user._id}>
+                  <li key={user._id} onClick={() => onUserSelect(user)}>
                     {user.name}
                   </li>
                 ))
@@ -45,13 +46,20 @@ function UserList() {
             </ul>
           </div>
         )}
-        <ul>
-          {users.map((user) => (
-            <li key={user} onClick={() => onUserSelect(user)}>
-              {user}
-            </li>
-          ))}
-        </ul>
+
+        {users.length === 0 ? (
+          <p className='no-user'>
+            Add a user to start chatting
+          </p>    
+        ): (
+          <ul>
+            {users.map((user) => (
+              <li key={user} onClick={() => onUserSelect(user)}>
+               {user}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     );
 }

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 
-function ChatWindow() {
+function ChatWindow({ user }) {
   const backendUrl = import.meta.env.VITE_BACKEND_URL
   const socket = io(backendUrl)
 
@@ -27,8 +27,9 @@ function ChatWindow() {
   }
 
   return (
-    <div className='chat-window'>          
-        <h2>Chat with xyz</h2>
+    <div className='chat-window'>  
+      { user ? <div className="message-window">
+        <h2>Chat with {user.name}</h2>
         <div className="chat-messages">
         {/* Here you can render message history or live chat messages */}
           {messages.map((msg, index) => (
@@ -37,6 +38,9 @@ function ChatWindow() {
         </div>
         <input type="text" placeholder="Type a message..." className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button onClick={sendMessage} >Send</button>
+      </div> : <div className='no-chat'>
+        <p>Select a user to open inbox</p>
+        </div>}       
     </div>
   )
 }

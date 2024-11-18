@@ -70,6 +70,8 @@ form.signup, form.login {
 }
 
 .user-list {
+  display: flex;
+  flex-direction: column;
   width: 30%;
   border-right: 1px solid #ddd;
   padding: 20px;
@@ -93,6 +95,12 @@ form.signup, form.login {
 
 .user-list li:hover {
   background-color: #e0e0e0;
+}
+
+.no-user {
+  text-align: center;
+  align-self: center;
+  margin: auto;
 }
 
 .search-input {
@@ -120,6 +128,18 @@ form.signup, form.login {
   padding: 20px;
   display: flex;
   flex-direction: column;
+}
+
+.message-window {
+  display:  flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.no-chat {
+  text-align: center;
+  align-self: center;
+  margin: auto;
 }
 
 .chat-messages {
