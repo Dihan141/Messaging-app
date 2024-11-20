@@ -19,6 +19,7 @@ const io = new Server(server, {
 const authroutes = require('./user/routers/authRoutes');
 const userRoutes = require('./user/routers/userRoutes');
 const messageRoutes = require('./message/routers/messageRoutes');
+const connectionRoutes = require('./connections/routers/connectionRoutes');
 
 app.use(cors({
     origin: 'http://localhost:5173'
@@ -39,6 +40,7 @@ mongoose.connect(process.env.MONGO_URI).then(()=>{
 app.use('/api/auth', authroutes)
 app.use('/api/user', userRoutes)
 app.use('/api/messages', messageRoutes)
+app.use('/api/connections', connectionRoutes)
 
 io.on('connection', (socket) => {
     console.log('A user connected:', socket.id);

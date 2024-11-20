@@ -36,8 +36,10 @@ function ChatWindow({ user }) {
               <p key={index}>{msg}</p>
           ))}
         </div>
-        <input type="text" placeholder="Type a message..." className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
-        <button onClick={sendMessage} >Send</button>
+        <div className="input-container">
+          <input type="text" placeholder="Type a message..." className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
+          <button className='message-input-btn'  onClick={sendMessage} >Send</button>
+        </div>
       </div> : <div className='no-chat'>
         <p>Select a user to open inbox</p>
         </div>}       

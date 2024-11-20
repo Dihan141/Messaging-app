@@ -147,7 +147,19 @@ form.signup, form.login {
   overflow-y: auto;
 }
 
+.input-container {
+  display: flex;
+  align-items: center;
+}
+
+.message-input-btn {
+  padding: 10px;
+  margin: 10px;
+}
+
 .message-input {
+  flex-grow: 1;
+  height: 20px;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 4px;
