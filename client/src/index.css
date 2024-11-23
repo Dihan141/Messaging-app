@@ -144,6 +144,7 @@ form.signup, form.login {
 
 .chat-messages {
   flex: 1;
+  max-height: 57vh;
   overflow-y: auto;
 }
 

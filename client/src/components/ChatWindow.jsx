@@ -1,28 +1,68 @@
 import React, { useEffect, useState } from 'react'
 import io from 'socket.io-client'
+import { useAuthContext } from '../hooks/useAuthContext'
+import axios from 'axios'
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL
+const socket = io(backendUrl)
 
 function ChatWindow({ user }) {
-  const backendUrl = import.meta.env.VITE_BACKEND_URL
-  const socket = io(backendUrl)
+  const userInfo = useAuthContext()
+  const currUserId = userInfo.user.newUser.id
 
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
 
   useEffect(() => {
-    socket.on('message', (message) => {
-      console.log('Message received:', message)
-      setMessages((prevMessages) => [...prevMessages, message]);
-    })
+    const messagesContainer = document.querySelector('.chat-messages');
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }, [messages]);
+
+  useEffect(() => {
+    if(user){
+      socket.emit('joinRoom', currUserId)
+
+      axios.get(`${backendUrl}/api/messages/${user._id}`, {
+        headers: {
+          Authorization: `Bearer ${userInfo.user.token}`
+        }
+      }).then((res) => {
+        console.log('working')
+        console.log(res.data)
+        setMessages(res.data.messages)
+      }).catch((err) => {
+        console.log(err)
+      })
+    }
+
+    socket.on('receiveMessage', (newMessage) => {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    });
 
     return () => {
-      socket.off('message')
-    }
-  },[])
+      socket.off('receiveMessage');
+    };
+  },[user])
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     if(input.trim()){
-      socket.emit('message', input)
-      setInput('')
+      const message = {
+        senderId: currUserId,
+        receiverId: user._id,
+        content: input
+      }
+
+      await axios.post(`${backendUrl}/api/messages`, message, {
+        headers: {
+          Authorization: `Bearer ${userInfo.user.token}`
+        }
+      }).then((res) => {
+        console.log(res.data)
+        setMessages((prevMessages) => [...prevMessages, res.data.message])
+        setInput('')
+      }).catch((err) => {
+        console.log(err)
+      })
     }
   }
 
@@ -33,7 +73,7 @@ function ChatWindow({ user }) {
         <div className="chat-messages">
         {/* Here you can render message history or live chat messages */}
           {messages.map((msg, index) => (
-              <p key={index}>{msg}</p>
+              <p key={index}>{msg.content}</p>
           ))}
         </div>
         <div className="input-container">

@@ -27,6 +27,7 @@ const login = async (req, res) => {
         }
 
         const newUser = {
+            id: user._id,
             username: user.name,
             email: user.email
         }

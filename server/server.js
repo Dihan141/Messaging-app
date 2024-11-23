@@ -4,16 +4,9 @@ const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const { createServer } = require('http')
-const { Server } = require('socket.io') 
+const { initSocket } = require('./config/socket')
 const app = express()
 const server = createServer(app)
-const io = new Server(server, {
-    cors: {
-        origin: 'http://localhost:5173', // Allow only your React app's origin
-        methods: ['GET', 'POST'],
-        credentials: true
-    }
-})
 
 //routes
 const authroutes = require('./user/routers/authRoutes');
@@ -42,18 +35,7 @@ app.use('/api/user', userRoutes)
 app.use('/api/messages', messageRoutes)
 app.use('/api/connections', connectionRoutes)
 
-io.on('connection', (socket) => {
-    console.log('A user connected:', socket.id);
-
-    socket.on('message', (data) => {
-        console.log('Message received:', data);
-        io.emit('message', data); // Broadcast the message to all clients
-    });
-
-    socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
-    });
-})
+initSocket(server)
 
 server.listen(process.env.PORT, ()=>{
     console.log(`Server is running on port ${process.env.PORT}`)
