@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 import { useAuthContext } from '../hooks/useAuthContext'
+import Message from './Message/Message'
 import axios from 'axios'
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
-function ChatWindow({ user }) {
+function ChatWindow({ user, setLastUser }) {
   const userInfo = useAuthContext()
   const currUserId = userInfo.user.newUser.id
 
@@ -14,6 +15,7 @@ function ChatWindow({ user }) {
   const [input, setInput] = useState('')
 
   useEffect(() => {
+    if(messages.length === 0) return;
     const messagesContainer = document.querySelector('.chat-messages');
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }, [messages]);
@@ -36,6 +38,7 @@ function ChatWindow({ user }) {
     }
 
     socket.on('receiveMessage', (newMessage) => {
+      console.log('message received')
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
@@ -59,6 +62,7 @@ function ChatWindow({ user }) {
       }).then((res) => {
         console.log(res.data)
         setMessages((prevMessages) => [...prevMessages, res.data.message])
+        setLastUser(user)
         setInput('')
       }).catch((err) => {
         console.log(err)
@@ -73,7 +77,7 @@ function ChatWindow({ user }) {
         <div className="chat-messages">
         {/* Here you can render message history or live chat messages */}
           {messages.map((msg, index) => (
-              <p key={index}>{msg.content}</p>
+              <Message key={index} message={msg} isSender={msg.senderId === currUserId} />
           ))}
         </div>
         <div className="input-container">

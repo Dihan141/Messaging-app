@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 
-function UserList({ onUserSelect}) {
+function UserList({ onUserSelect, lastUser }) {
     const backendUrl = import.meta.env.VITE_BACKEND_URL;
     const users = [];
     //const users = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy', 'Karl', 'Liz', 'Mallory', 'Nia', 'Oscar', 'Peggy', 'Quinn', 'Ruth', 'Steve', 'Trent', 'Uma', 'Victor', 'Wendy', 'Xander', 'Yvonne', 'Zane'];
@@ -9,6 +9,7 @@ function UserList({ onUserSelect}) {
     const [filteredUsers, setFilteredUsers] = useState([]);  
     const overlayRef = useRef(null);
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);  
+
 
     const handleSearchChange = async (e) => {
       const value = e.target.value;

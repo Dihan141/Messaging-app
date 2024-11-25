@@ -4,10 +4,11 @@ import ChatWindow from '../components/ChatWindow'
 
 function Home() {
   const [user, setUser] = useState(null);
+  const [lastUser, setLastUser] = useState(null);
   return (
     <div className="chatapp">
-      <UserList onUserSelect={setUser} />
-      <ChatWindow user={user}/>
+      <UserList onUserSelect={setUser} lastUser={lastUser}/>
+      <ChatWindow user={user} setLastUser={setLastUser}/>
     </div>
   )
 }
