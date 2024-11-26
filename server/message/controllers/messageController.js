@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Message = require('../models/messageModel');
+const User = require('../../user/models/userModel');
 const { getIo } = require('../../config/socket');
 
 const getMessages = async (req, res) => {
@@ -30,6 +31,15 @@ const postMessages = async (req, res) => {
         });
     
         await message.save();
+
+        const sender = await User.findById(senderId);
+        const receiver = await User.findById(receiverId);
+
+        sender.contacts.addToSet(receiverId);
+        receiver.contacts.addToSet(senderId);
+
+        await sender.save();
+        await receiver.save();
 
         const io = getIo();
         io.to(receiverId).emit('receiveMessage', message);

@@ -38,8 +38,10 @@ function ChatWindow({ user, setLastUser }) {
     }
 
     socket.on('receiveMessage', (newMessage) => {
-      console.log('message received')
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      console.log('message received', newMessage)
+      if(newMessage.senderId === user._id){
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+      }
     });
 
     return () => {

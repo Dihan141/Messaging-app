@@ -1,14 +1,18 @@
 import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
+import { useAuthContext } from '../hooks/useAuthContext';
+
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function UserList({ onUserSelect, lastUser }) {
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-    const users = [];
+    const [users, setUsers] = useState([]);
     //const users = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy', 'Karl', 'Liz', 'Mallory', 'Nia', 'Oscar', 'Peggy', 'Quinn', 'Ruth', 'Steve', 'Trent', 'Uma', 'Victor', 'Wendy', 'Xander', 'Yvonne', 'Zane'];
     const [searchValue, setSearchValue] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);  
     const overlayRef = useRef(null);
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);  
+
+    const userInfo = useAuthContext();
 
 
     const handleSearchChange = async (e) => {
@@ -30,6 +34,28 @@ function UserList({ onUserSelect, lastUser }) {
   }
 
   useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await axios.get(`${backendUrl}/api/user/contacts/get`, {
+          headers: {
+            Authorization: `Bearer ${userInfo.user.token}`
+          }
+        });
+
+        const data = response.data;
+        console.log(data)
+        if(data.success) {
+          setUsers(data.contacts);
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    fetchContacts();
+  }, [])
+
+  useEffect(() => {
     const handleClickOutside = (e) => {
       console.log('click outside')
       if(overlayRef.current && !overlayRef.current.contains(e.targer)){
@@ -43,6 +69,11 @@ function UserList({ onUserSelect, lastUser }) {
       document.removeEventListener('click', handleClickOutside)
     }
   },[])
+
+  useEffect(() => {
+    console.log('last user', lastUser)  
+  }, [lastUser])
+
     return (
       <div className="user-list">
         <input type="text" placeholder="Search..." className="search-input" value={searchValue} onChange={handleSearchChange} />
@@ -75,8 +106,8 @@ function UserList({ onUserSelect, lastUser }) {
         ): (
           <ul>
             {users.map((user) => (
-              <li key={user} onClick={() => onUserSelect(user)}>
-               {user}
+              <li key={user._id} onClick={() => onUserSelect(user)}>
+               {user.name}
               </li>
             ))}
           </ul>

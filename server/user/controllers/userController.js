@@ -23,6 +23,21 @@ const getUsersBySearch = async (req, res) => {
     
 }
 
+const getContacts = async (req, res) => {
+    try {
+        console.log('get contacts')
+        const { userId } = req
+        const user = await User.findById(userId).populate('contacts', 'name email')
+
+        console.log(user.contacts)
+
+        res.status(200).json({contacts: user.contacts, success: true})
+    } catch (error) {
+        res.status(500).json({msg: 'Internal server error.', success: false, error: error.message});
+    }
+}
+
 module.exports = {
-    getUsersBySearch
+    getUsersBySearch,
+    getContacts
 }

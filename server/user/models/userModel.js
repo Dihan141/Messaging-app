@@ -18,7 +18,11 @@ const userSchema = schema({
     verified: {
         type: Boolean,
         default: false
-    }
+    },
+    contacts: [{
+        type: schema.Types.ObjectId,
+        ref: 'User'
+    }]
 },{
     timeStamps: true
 });
