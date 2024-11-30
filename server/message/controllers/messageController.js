@@ -50,7 +50,80 @@ const postMessages = async (req, res) => {
     } 
 }
 
+const getLastMessages = async (req, res) => {
+    try {
+        console.log(req.userId)
+        const userId = new mongoose.Types.ObjectId(req.userId)
+
+        const messages = await Message.aggregate([
+            // Match messages involving the user
+            {
+              $match: {
+                $or: [
+                  { senderId: userId },
+                  { receiverId: userId }
+                ]
+              }
+            },
+            // Sort messages by createdAt
+            { $sort: { createdAt: -1 } },
+            //grouping by sender and receiver
+            {
+                $group: {
+                  _id: {
+                    $cond: [
+                      { $gt: ["$senderId", "$receiverId"] },
+                      { sender: "$receiverId", receiver: "$senderId" },
+                      { sender: "$senderId", receiver: "$receiverId" }
+                    ]
+                  },
+                  lastMessage: { $first: "$$ROOT" }
+                }
+              },
+              // Lookup for sender info
+              {
+                $lookup: {
+                  from: "users",
+                  localField: "lastMessage.senderId",
+                  foreignField: "_id",
+                  as: "senderInfo",
+                  pipeline: [
+                    { $project: { name: 1, email: 1 } }
+                  ]
+                }
+              },
+              // Lookup for receiver info
+              {
+                $lookup: {
+                  from: "users",
+                  localField: "lastMessage.receiverId",
+                  foreignField: "_id",
+                  as: "receiverInfo",
+                  pipeline: [
+                    { $project: { name: 1, email: 1 } }
+                  ]
+                }
+              },
+              // Project the fields we want, remove array wrapping for populated fields
+              {
+                $project: {
+                  lastMessage: 1,
+                  senderInfo: { $arrayElemAt: ["$senderInfo", 0] },
+                  receiverInfo: { $arrayElemAt: ["$receiverInfo", 0] }
+                }
+              },
+              // Sort by timestamp again if needed
+              { $sort: { "lastMessage.createdAt": -1 } }
+        ])
+
+        res.status(200).json({ success:true, messages})
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 module.exports = {
     getMessages,
-    postMessages
+    postMessages,
+    getLastMessages
 }

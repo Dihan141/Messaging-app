@@ -36,7 +36,7 @@ function UserList({ onUserSelect, lastUser }) {
   useEffect(() => {
     const fetchContacts = async () => {
       try {
-        const response = await axios.get(`${backendUrl}/api/user/contacts/get`, {
+        const response = await axios.get(`${backendUrl}/api/messages/last-messages/get`, {
           headers: {
             Authorization: `Bearer ${userInfo.user.token}`
           }
@@ -45,7 +45,13 @@ function UserList({ onUserSelect, lastUser }) {
         const data = response.data;
         console.log(data)
         if(data.success) {
-          setUsers(data.contacts);
+          const messages = data.messages;
+          const users = messages.map((message) => {
+            const user = message.senderInfo._id === userInfo.user.newUser.id ? message.receiverInfo : message.senderInfo;
+            return user;
+          })
+
+          setUsers(users);
         }
       } catch (error) {
         console.log(error)
