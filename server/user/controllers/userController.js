@@ -37,7 +37,23 @@ const getContacts = async (req, res) => {
     }
 }
 
+const getUserInfo = async (req, res) => {
+    try {
+        const { userId } = req.params
+        const user = await User.findById(userId).select('name email')
+        
+        if(!user){
+            return res.status(404).json({msg: 'User not found', success: false})
+        }
+
+        res.status(200).json({user, success: true})
+    } catch (error) {
+        res.status(500).json({msg: 'Internal server error.', success: false, error: error.message});
+    }
+}
+
 module.exports = {
     getUsersBySearch,
-    getContacts
+    getContacts,
+    getUserInfo
 }

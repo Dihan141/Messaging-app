@@ -39,6 +39,7 @@ function ChatWindow({ user, setLastUser }) {
 
     socket.on('receiveMessage', (newMessage) => {
       console.log('message received', newMessage)
+      setLastUser(newMessage.senderId)
       if(newMessage.senderId === user._id){
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
@@ -64,7 +65,7 @@ function ChatWindow({ user, setLastUser }) {
       }).then((res) => {
         console.log(res.data)
         setMessages((prevMessages) => [...prevMessages, res.data.message])
-        setLastUser(user)
+        setLastUser(user._id)
         setInput('')
       }).catch((err) => {
         console.log(err)

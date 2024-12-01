@@ -6,7 +6,6 @@ const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function UserList({ onUserSelect, lastUser }) {
     const [users, setUsers] = useState([]);
-    //const users = ['Alice', 'Bob', 'Charlie', 'Dave', 'Eve', 'Frank', 'Grace', 'Heidi', 'Ivan', 'Judy', 'Karl', 'Liz', 'Mallory', 'Nia', 'Oscar', 'Peggy', 'Quinn', 'Ruth', 'Steve', 'Trent', 'Uma', 'Victor', 'Wendy', 'Xander', 'Yvonne', 'Zane'];
     const [searchValue, setSearchValue] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);  
     const overlayRef = useRef(null);
@@ -14,7 +13,7 @@ function UserList({ onUserSelect, lastUser }) {
 
     const userInfo = useAuthContext();
 
-
+    //Handle search input change
     const handleSearchChange = async (e) => {
       const value = e.target.value;
       setSearchValue(value);
@@ -33,6 +32,7 @@ function UserList({ onUserSelect, lastUser }) {
     };
   }
 
+  //Fetch last messages and users and set the users state
   useEffect(() => {
     const fetchContacts = async () => {
       try {
@@ -61,6 +61,7 @@ function UserList({ onUserSelect, lastUser }) {
     fetchContacts();
   }, [])
 
+  //Close search overlay when clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       console.log('click outside')
@@ -76,8 +77,38 @@ function UserList({ onUserSelect, lastUser }) {
     }
   },[])
 
+  //Move last user to the top of the list, if the user is already in the list, move it to the top
+  //else fetch the user and add it to the top of the list
   useEffect(() => {
     console.log('last user', lastUser)  
+    const index = users.findIndex((user) => user._id === lastUser)
+    if(index !== -1){
+      const user = users[index];
+      const newUsers = [...users];
+      newUsers.splice(index, 1);
+      newUsers.unshift(user);
+      setUsers(newUsers);
+    }
+    else {
+      const getUser = async () => {
+        const userResponse = await axios.get(`${backendUrl}/api/user/get/${lastUser}`, {
+          headers: {
+            Authorization: `Bearer ${userInfo.user.token}`
+          }
+        })
+    
+        const userData = userResponse.data;
+        if(userData.success){
+          const user = userData.user;
+          const newUsers = [user, ...users];
+          setUsers(newUsers);
+        }
+      }
+
+      if(lastUser){
+        getUser();
+      }
+    }
   }, [lastUser])
 
     return (
