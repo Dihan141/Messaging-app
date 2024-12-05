@@ -7,13 +7,13 @@
   --error: #e7195a;
 }
 body {
-  background: #f1f1f1;
+  background: #121212;
   height: 100%;
   margin: 0;
   font-family: "Poppins";
 }
 header {
-  background: #fff;
+  background: #282828;
 }
 header .container {
   max-width: 1400px;
@@ -24,7 +24,7 @@ header .container {
   justify-content: space-between;
 }
 header a {
-  color: #333;
+  color: #42a5eb;
   text-decoration: none;
 }
 .pages{
@@ -40,11 +40,12 @@ nav {
 }
 nav a, nav button {
   margin-left: 10px;
+  color: white;
 }
 nav button {
-  background: #fff;
-  color: var(--primary);
-  border: 2px solid var(--primary);
+  background: #121212;
+  color: white;
+  border: 2px solid white;
   padding: 6px 10px;
   border-radius: 4px;
   font-family: "Poppins";
@@ -57,7 +58,7 @@ form.signup, form.login {
   max-width: 400px;
   margin: 40px auto;
   padding: 20px;
-  background: #fff;
+  background: #282828;
   border-radius: 4px;
 }
 
@@ -66,14 +67,14 @@ form.signup, form.login {
   display: flex;
   /* max-width: 1400px; */
   height: 80vh;
-  background-color: #fff;
+  background-color: #282828;
 }
 
 .user-list {
   display: flex;
   flex-direction: column;
   width: 30%;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid #121212;
   padding: 20px;
   position: relative;
   overflow-y: auto;
@@ -91,23 +92,28 @@ form.signup, form.login {
 .user-list li {
   padding: 20px;
   cursor: pointer;
+  color: white;
 }
 
 .user-list li:hover {
-  background-color: #e0e0e0;
+  background-color: #3f3f3f;
 }
 
 .no-user {
   text-align: center;
   align-self: center;
   margin: auto;
+  color: #717171;
 }
 
 .search-input {
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #121212;
   width: 95%;
   border-radius: 4px;
+  color: white;
+  background-color: #282828;
+  border-radius: 50px;
 }
 
 .search-overlay {
@@ -115,8 +121,8 @@ form.signup, form.login {
   top: 10%; /* Below the search input */
   left: 0;
   right: 0;
-  background: white;
-  border: 1px solid #ddd;
+  background: #282828;
+  border: 1px solid #121212;
   border-radius: 4px;
   max-height: 150px;
   overflow-y: auto;
@@ -140,6 +146,7 @@ form.signup, form.login {
   text-align: center;
   align-self: center;
   margin: auto;
+  color: #717171;
 }
 
 .chat-messages {

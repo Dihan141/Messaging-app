@@ -1,0 +1,55 @@
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+}
+
+.signup {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.signup h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #61afed;
+}
+
+.signup label {
+    color: white;
+}
+
+.signup input {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #121212;
+    border-radius: 5px;
+    background-color: #282828;
+    color: white;
+}
+
+.signup input:-webkit-autofill {
+    background-color: #282828 !important;  /* Set your desired background color */
+    color: white !important;               /* Set the text color */
+    border: 1px solid #121212 !important;  /* Ensure the border style is consistent */
+    -webkit-text-fill-color: white !important;  /* Forces the text color */
+    transition: background-color 5000s ease-in-out 0s;  /* Prevents flashing effect */
+}
+
+.signup input:-webkit-autofill::first-line {
+    font-family: inherit;   /* Ensure consistent font styling */
+    font-size: inherit;     /* Match font size */
+}
+
+
+.signup button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #13ae18;
+    color: white;
+    cursor: pointer;
+    background-color: #61afed;
+}

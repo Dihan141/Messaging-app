@@ -3,8 +3,8 @@ import { useAuthContext } from './hooks/useAuthContext'
 
 // pages & components
 import Home from './pages/Home'
-import Login from './pages/Login'
-import Signup from './pages/Signup'
+import Login from './pages/login/Login'
+import Signup from './pages/signup/Signup'
 import Navbar from './components/Navbar'
 
 function App() {
