@@ -10,6 +10,7 @@ function UserList({ onUserSelect, lastUser }) {
     const [filteredUsers, setFilteredUsers] = useState([]);  
     const overlayRef = useRef(null);
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);  
+    const [debounceTimer, setDebounceTimer] = useState(null); 
 
     const userInfo = useAuthContext();
 
@@ -17,19 +18,28 @@ function UserList({ onUserSelect, lastUser }) {
     const handleSearchChange = async (e) => {
       const value = e.target.value;
       setSearchValue(value);
-      
-    if (value) {
-        setIsOverlayVisible(true);
-        setFilteredUsers([])  
-        const response = await axios.get(`${backendUrl}/api/user/${value}`);
-        const data = response.data
+      setFilteredUsers([]);
 
-        if(data.success) {
-          setFilteredUsers(data.users)
-        } else {
-          setFilteredUsers([])
-        }
-    };
+      if(debounceTimer) {
+        clearTimeout(debounceTimer)
+      }
+
+      const newTimer = setTimeout(async () => {
+        if (value) {
+          setIsOverlayVisible(true);
+          //setFilteredUsers([])  
+          const response = await axios.get(`${backendUrl}/api/user/${value}`);
+          const data = response.data
+  
+          if(data.success) {
+            setFilteredUsers(data.users)
+          } else {
+            setFilteredUsers([])
+          }
+        };
+      }, 1000);
+      
+      setDebounceTimer(newTimer);
   }
 
   //Fetch last messages and users and set the users state

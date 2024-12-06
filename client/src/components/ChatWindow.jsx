@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { IoMdSend } from "react-icons/io";
+import { GrGallery } from "react-icons/gr";
+import { FaMicrophone } from "react-icons/fa6";
 import io from 'socket.io-client'
 import { useAuthContext } from '../hooks/useAuthContext'
 import Message from './Message/Message'
@@ -84,8 +87,16 @@ function ChatWindow({ user, setLastUser }) {
           ))}
         </div>
         <div className="input-container">
+          <button className='message-input-btn'  onClick={() => {}} >
+            <GrGallery size='25px' color='white' />
+          </button>
+          <button className='message-input-btn'  onClick={() => {}} >
+            <FaMicrophone size='25px' color='white' />
+          </button>
           <input type="text" placeholder="Type a message..." className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
-          <button className='message-input-btn'  onClick={sendMessage} >Send</button>
+          <button className='message-input-btn'  onClick={sendMessage} >
+            <IoMdSend size='25px' color='white' />
+          </button>
         </div>
       </div> : <div className='no-chat'>
         <p>Select a user to open inbox</p>
