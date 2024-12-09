@@ -196,3 +196,25 @@ form.signup, form.login {
   border: 1px solid #ddd;
   border-radius: 50px;
 }
+
+.audio-visualizer {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 15px; 
+  margin: 10px;
+  border-radius: 50px;
+  background-color: #61afed;
+}
+
+.canvas-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.visualizer {
+  flex-grow: 1;
+  width: 100%;
+}
