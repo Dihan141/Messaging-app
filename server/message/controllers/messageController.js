@@ -23,11 +23,14 @@ const getMessages = async (req, res) => {
 
 const postMessages = async (req, res) => {
     try {
-        const { senderId, receiverId, content } = req.body;
+        const { senderId, receiverId, content, messageType } = req.body;
+
         const message = new Message({
             senderId,
             receiverId,
-            content
+            content,
+            messageType,
+            audio: messageType === 'audio' ? req.file.path : null
         });
     
         await message.save();
@@ -125,5 +128,5 @@ const getLastMessages = async (req, res) => {
 module.exports = {
     getMessages,
     postMessages,
-    getLastMessages
+    getLastMessages,
 }

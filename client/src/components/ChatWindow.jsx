@@ -156,19 +156,27 @@ function ChatWindow({ user, setLastUser }) {
   },[user])
 
   const sendMessage = async () => {
-    console.log(recorderControls.recordedBlob)
-    console.log(recorderControls.audioSrc)
-    recorderControls.saveAudioFile()
-    if(input.trim()){
-      const message = {
-        senderId: currUserId,
-        receiverId: user._id,
-        content: input
-      }
+    recorderControls.stopRecording()
+    recorderControls.clearCanvas()
+    if(input.trim() || recorderControls.isAvailableRecordedAudio){
+      const formData = new FormData()
 
-      await axios.post(`${backendUrl}/api/messages`, message, {
+      // const message = {
+      //   senderId: currUserId,
+      //   receiverId: user._id,
+      //   content: input
+      // }
+
+      formData.append('senderId', currUserId)
+      formData.append('receiverId', user._id)
+      formData.append('content', input)
+      formData.append('messageType', recorderControls.isAvailableRecordedAudio? 'audio': 'text')
+      formData.append('file', recorderControls.isAvailableRecordedAudio? recorderControls.recordedBlob: null, 'audio.weba')
+
+      await axios.post(`${backendUrl}/api/messages`, formData, {
         headers: {
-          Authorization: `Bearer ${userInfo.user.token}`
+          Authorization: `Bearer ${userInfo.user.token}`,
+          "Content-Type": "multipart/form-data"
         }
       }).then((res) => {
         console.log(res.data)

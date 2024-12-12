@@ -1,18 +1,69 @@
+/* General container for messages */
 .msg-container {
-    width: fit-content; /* Ensures the container adjusts to the width of its content */
-    max-width: 60%; /* Set a max width for the message bubble */
-    background-color: #61afed; /* Background color for the message */
-    color: #fff; /* Text color */
-    padding: 5px 15px; /* Padding inside the bubble */
-    margin: 5px 0; /* Spacing between messages */
-    border-radius: 50px; /* Rounded corners */
-    word-wrap: break-word; /* Ensures long words wrap within the container */
-    white-space: pre-wrap; /* Ensures line breaks and spaces in the content are respected */
+    width: fit-content;
+    max-width: 70%; /* Restrict the width of the message bubble */
+    background-color: #61afed; /* Light blue background for received messages */
+    color: #fff; /* White text */
+    padding: 10px 20px; /* Add padding for a balanced look */
+    margin: 10px 0; /* Space between messages */
+    border-radius: 25px; /* Rounded corners for the bubble */
+    word-wrap: break-word; /* Ensure long words break within the container */
+    white-space: pre-wrap; /* Retain spaces and line breaks */
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    font-family: 'Arial', sans-serif; /* Clean font style */
+    font-size: 14px; /* Adjust font size */
+    transition: transform 0.2s ease-in-out; /* Smooth animation on hover */
 }
 
+/* Message alignment for sender */
 .msg-container.pinned-right {
-    margin-right: 5px;
-    align-self: flex-end; /* Aligns the message to the right */
-    background-color: #121212; /* Different background color for the sender */
-    color: white; /* Text color for the sender */
+    align-self: flex-end; /* Align the sender's message to the right */
+    background-color: #121212; /* Dark background for sender's message */
+    color: #f1f1f1; /* Lighter text for contrast */
+    margin-right: 10px;
+}
+
+/* Hover effect to make messages pop */
+.msg-container:hover {
+    transform: scale(1.02); /* Slightly enlarge on hover */
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+}
+
+/* Styling for the audio message container */
+.audio-msg {
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.audio-duration {
+    align-self: flex-end;
+    margin-top: 40px;
+}
+
+/* Customization for the audio waveform */
+.wavesurfer-container {
+    height: 40px !important; /* Ensure consistent height for waveform */
+    width: 100%; /* Full width */
+    border-radius: 50px; /* Rounded edges for visualizer */
+    overflow: hidden; /* Hide overflow to maintain roundness */
+    background-color: #e0e7f0; /* Light background for the waveform */
+}
+
+.audio-visualizer {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1px 15px; 
+    margin: 10px;
+    border-radius: 50px;
+    background-color: #61afed;
+}
+
+.audio-btn {
+    background-color: transparent;
+    border: none;
+    margin-right: 10px;
 }
