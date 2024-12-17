@@ -64,7 +64,7 @@ function Message({ message, isSender }) {
             height={50}
             width={150}
           />
-          <p className='audio-duration'>{recorderControls.duration}</p>
+          <p className='audio-duration'>{parseInt(recorderControls.duration/60)}:{parseInt(recorderControls.duration%60)}</p>
         </>}
         </div>
       ) : (

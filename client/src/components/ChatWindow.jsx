@@ -12,6 +12,7 @@ import axios from 'axios'
 import WaveSurfer from 'wavesurfer.js'
 import { LiveAudioVisualizer } from 'react-audio-visualize';
 import { useVoiceVisualizer, VoiceVisualizer } from "react-voice-visualizer";
+import ChatHeader from './ChatHeader/ChatHeader';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
@@ -192,7 +193,7 @@ function ChatWindow({ user, setLastUser }) {
   return (
     <div className='chat-window'>  
       { user ? <div className="message-window">
-        <h2>Chat with {user.name}</h2>
+        <ChatHeader user={user} />
         <div className="chat-messages">
         {/* Here you can render message history or live chat messages */}
           {messages.map((msg, index) => (

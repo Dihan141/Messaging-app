@@ -1,0 +1,23 @@
+.chat-header {
+    height: 70px;
+    width: 100%;
+    color: white;
+    display: flex;
+}
+  
+.chat-header h2 {
+    margin: 0;
+    flex: 1;
+}
+
+.header-icon {
+    align-self: start;
+    padding-left: 5px;
+    padding-right: 5px;
+    border-radius: 50px;
+}
+
+.header-icon:hover {
+    background-color: #121212;
+    transform: scale(1.1);
+}
