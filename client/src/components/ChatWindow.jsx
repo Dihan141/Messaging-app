@@ -13,12 +13,14 @@ import WaveSurfer from 'wavesurfer.js'
 import { LiveAudioVisualizer } from 'react-audio-visualize';
 import { useVoiceVisualizer, VoiceVisualizer } from "react-voice-visualizer";
 import ChatHeader from './ChatHeader/ChatHeader';
+import { useWindow } from '../hooks/useWindow';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
 function ChatWindow({ user, setLastUser }) {
+  const { isChatInfoOpen, isChatWindowOpen, toggleChatWindow } = useWindow() 
   const recorderControls = useVoiceVisualizer();
-  console.log(recorderControls);
+  // console.log(recorderControls);
   const userInfo = useAuthContext()
   const currUserId = userInfo.user.newUser.id
 
@@ -32,6 +34,24 @@ function ChatWindow({ user, setLastUser }) {
   const waveformRef = useRef(null)
   const mediaRecorderRef = useRef(null)
   const [mediaRecorder, setMediaRecorder] = useState(null)
+
+  const handleResize = () => {
+    if(window.innerWidth > 650 && window.innerWidth < 850){
+      if(!isChatWindowOpen){
+        toggleChatWindow()
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Add event listener
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
 
   // const visualizerWrapperRef = useRef(null);
@@ -135,8 +155,8 @@ function ChatWindow({ user, setLastUser }) {
           Authorization: `Bearer ${userInfo.user.token}`
         }
       }).then((res) => {
-        console.log('working')
-        console.log(res.data)
+        // console.log('working')
+        // console.log(res.data)
         setMessages(res.data.messages)
       }).catch((err) => {
         console.log(err)
@@ -172,7 +192,9 @@ function ChatWindow({ user, setLastUser }) {
       formData.append('receiverId', user._id)
       formData.append('content', input)
       formData.append('messageType', recorderControls.isAvailableRecordedAudio? 'audio': 'text')
-      formData.append('file', recorderControls.isAvailableRecordedAudio? recorderControls.recordedBlob: null, 'audio.weba')
+      if(recorderControls.isAvailableRecordedAudio){
+        formData.append('file', recorderControls.recordedBlob, 'audio.weba')
+      }
 
       await axios.post(`${backendUrl}/api/messages`, formData, {
         headers: {
@@ -180,7 +202,7 @@ function ChatWindow({ user, setLastUser }) {
           "Content-Type": "multipart/form-data"
         }
       }).then((res) => {
-        console.log(res.data)
+        // console.log(res.data)
         setMessages((prevMessages) => [...prevMessages, res.data.message])
         setLastUser(user._id)
         setInput('')
@@ -191,7 +213,7 @@ function ChatWindow({ user, setLastUser }) {
   }
 
   return (
-    <div className='chat-window'>  
+    <div className={isChatInfoOpen || !isChatWindowOpen ? 'chat-window hide-chat-window': 'chat-window'}>  
       { user ? <div className="message-window">
         <ChatHeader user={user} />
         <div className="chat-messages">

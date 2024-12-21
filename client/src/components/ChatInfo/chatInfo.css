@@ -1,0 +1,21 @@
+.back-icon {
+    display: none;
+}
+
+@media (max-width: 850px) {
+    .back-icon {
+        display: block;
+        padding-left: 5px;
+        padding-right: 5px;
+        border-radius: 50px;
+    }
+}
+
+@media (max-width: 650px) {
+    .back-icon {
+        display: block;
+        padding-left: 5px;
+        padding-right: 5px;
+        border-radius: 50px;
+    }
+}

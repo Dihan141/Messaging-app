@@ -164,7 +164,8 @@ form.signup, form.login {
 
 .chat-messages {
   flex: 1;
-  max-height: 75vh;
+  /* max-height: 75vh; */
+  /* justify-content: flex-end; */
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -172,8 +173,9 @@ form.signup, form.login {
 
 .input-container {
   display: flex;
-  align-items: flex-end;
-  height: 100px;
+  align-items: center;
+  justify-content: center;
+  /* height: 100px; */
 }
 
 .message-input-btn {
@@ -247,5 +249,78 @@ form.signup, form.login {
 @media (max-width: 1000px) {
   .chat-window {
     width: 400px;
+  }
+}
+
+@media (max-width: 850px) {
+  .hide-chat-window {
+    display: none;
+  }
+
+  .chat-info {
+    flex: 1;
+  }
+}
+
+@media (max-width: 650px) {
+
+  .hide-user-list {
+    display: none;
+  }
+
+  .hide-chat-window {
+    display: none;
+  }
+
+  .chat-window {
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+  }
+
+  .user-list {
+    width: calc(100% - 40px);
+    height: calc(100% - 40px);
+  }
+
+  .input-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* height: 100px; */
+  }
+  
+  .message-input-btn {
+    height: 35px;
+    width: 35px;
+    padding: 5px;
+    margin: 5px;
+    background-color: #61afed; /* Primary color */
+    border: none;
+    border-radius: 50%; /* Circular button */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+  }
+  
+  .message-input-btn:hover {
+    background-color: #4a9bd9; /* Darker shade on hover */
+    transform: scale(1.1); /* Slight zoom-in effect */
+  }
+  
+  .message-input-btn:active {
+    transform: scale(1); /* Reset zoom on click */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Slightly deeper shadow */
+  }
+  
+  
+  .message-input {
+    /* padding: 12px; */
+    border: 1px solid #ddd;
+    border-radius: 50px;
+    height: 10px;
+    width: 100px;
   }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 import { useAuthContext } from '../hooks/useAuthContext';
+import { useWindow } from '../hooks/useWindow';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -11,6 +12,7 @@ function UserList({ onUserSelect, lastUser }) {
     const overlayRef = useRef(null);
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);  
     const [debounceTimer, setDebounceTimer] = useState(null); 
+    const { isChatWindowOpen, isChatInfoOpen, toggleChatWindow} = useWindow();
 
     const userInfo = useAuthContext();
 
@@ -122,7 +124,7 @@ function UserList({ onUserSelect, lastUser }) {
   }, [lastUser])
 
     return (
-      <div className="user-list">
+      <div className={isChatWindowOpen || isChatInfoOpen? 'user-list hide-user-list' : 'user-list'}>
         <input type="text" placeholder="Search..." className="search-input" value={searchValue} onChange={handleSearchChange} />
 
         {/* overlay for search results */}
@@ -153,7 +155,13 @@ function UserList({ onUserSelect, lastUser }) {
         ): (
           <ul>
             {users.map((user) => (
-              <li key={user._id} onClick={() => onUserSelect(user)}>
+              <li key={user._id} onClick={() => { 
+                  if(!isChatWindowOpen){
+                    toggleChatWindow()
+                  }
+                  onUserSelect(user)
+                }
+              }>
                {user.name}
               </li>
             ))}

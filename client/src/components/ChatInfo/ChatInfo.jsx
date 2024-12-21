@@ -1,10 +1,15 @@
 import React from 'react'
-import { useChatInfo } from '../../hooks/useChatInfo'
+import { useWindow } from '../../hooks/useWindow'
+import { IoMdArrowBack } from "react-icons/io";
+import './chatInfo.css'
 
 function ChatInfo() {
-  const { isChatInfoOpen } = useChatInfo()
+  const { toggleChatInfo, isChatInfoOpen } = useWindow()
   return (
-    <div className={isChatInfoOpen ? 'chat-info' : 'hidden'}>ChatInfo</div>
+    <div className={isChatInfoOpen ? 'chat-info' : 'hidden'}>
+      <IoMdArrowBack size={30} color='#61afed'  className='back-icon' onClick={toggleChatInfo}/>
+      ChatInfo
+    </div>
   )
 }
 

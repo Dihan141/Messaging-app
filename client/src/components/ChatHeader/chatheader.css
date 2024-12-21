@@ -1,4 +1,5 @@
 .chat-header {
+    padding-bottom: 10px;
     height: 70px;
     width: 100%;
     color: white;
@@ -20,4 +21,22 @@
 .header-icon:hover {
     background-color: #121212;
     transform: scale(1.1);
+}
+
+.chat-window-back-icon {
+    display: none;
+}
+
+@media (max-width: 650px) {
+    .chat-window-back-icon {
+        display: block;
+        align-self: start;
+        padding-left: 5px;
+        padding-right: 5px;
+        border-radius: 50px;
+    }
+
+    .chat-header {
+        font-size: 14px;
+    }
 }
