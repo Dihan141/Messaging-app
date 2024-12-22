@@ -17,7 +17,7 @@ import { useWindow } from '../hooks/useWindow';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
-function ChatWindow({ user, setLastUser }) {
+function ChatWindow({ user, setLastUser, setLastMessage }) {
   const { isChatInfoOpen, isChatWindowOpen, toggleChatWindow } = useWindow() 
   const recorderControls = useVoiceVisualizer();
   // console.log(recorderControls);
@@ -166,6 +166,7 @@ function ChatWindow({ user, setLastUser }) {
     socket.on('receiveMessage', (newMessage) => {
       console.log('message received', newMessage)
       setLastUser(newMessage.senderId)
+      setLastMessage(newMessage)
       if(newMessage.senderId === user._id){
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
@@ -205,6 +206,7 @@ function ChatWindow({ user, setLastUser }) {
         // console.log(res.data)
         setMessages((prevMessages) => [...prevMessages, res.data.message])
         setLastUser(user._id)
+        setLastMessage(res.data.message)
         setInput('')
       }).catch((err) => {
         console.log(err)

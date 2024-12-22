@@ -1,0 +1,40 @@
+p {
+    margin: 0;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden; /* Prevent children from overflowing */
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.username {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.with-last-message {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow: hidden; /* Constrain the flex column to avoid overflow */
+    width: 100%; /* Make sure it doesn’t exceed the .user-card container */
+}
+
+.last-message {
+    color: #717171;
+    font-size: 14px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    white-space: nowrap; /* Prevent text wrapping */
+    max-width: 100%; /* Constrain the text to the parent width */
+}

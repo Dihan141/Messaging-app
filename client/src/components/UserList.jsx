@@ -2,11 +2,14 @@ import React, { useState, useRef, useEffect } from 'react'
 import axios from 'axios'
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useWindow } from '../hooks/useWindow';
+import UserCard from './UserCard/UserCard';
+import ProfileHeader from './ProfileHeader/ProfileHeader';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-function UserList({ onUserSelect, lastUser }) {
+function UserList({ onUserSelect, lastUser, lastMessage }) {
     const [users, setUsers] = useState([]);
+    const [lastMessages, setLastMessages] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);  
     const overlayRef = useRef(null);
@@ -63,7 +66,10 @@ function UserList({ onUserSelect, lastUser }) {
             return user;
           })
 
+          const lastMessages = messages.map((message) => message.lastMessage);
+
           setUsers(users);
+          setLastMessages(lastMessages)
         }
       } catch (error) {
         console.log(error)
@@ -123,8 +129,18 @@ function UserList({ onUserSelect, lastUser }) {
     }
   }, [lastUser])
 
+  useEffect(() => {
+    if(lastMessage){
+      console.log('last message', lastMessage)
+      const tempLastMessages = lastMessages.filter((message) => message.senderId !== lastMessage.senderId || message.receiverId !== lastMessage.receiverId);
+      const newLastMessages = [lastMessage, ...tempLastMessages];
+      setLastMessages(newLastMessages);
+    }
+  }, [lastMessage])
+
     return (
       <div className={isChatWindowOpen || isChatInfoOpen? 'user-list hide-user-list' : 'user-list'}>
+        <ProfileHeader user={userInfo.user.newUser} />
         <input type="text" placeholder="Search..." className="search-input" value={searchValue} onChange={handleSearchChange} />
 
         {/* overlay for search results */}
@@ -138,7 +154,7 @@ function UserList({ onUserSelect, lastUser }) {
                       onUserSelect(user)
                     }
                   }>
-                    {user.name}
+                    <UserCard user={user} />
                   </li>
                 ))
               ) : (
@@ -162,7 +178,7 @@ function UserList({ onUserSelect, lastUser }) {
                   onUserSelect(user)
                 }
               }>
-               {user.name}
+               <UserCard key={user._id} user={user} showLastMessage={true} lastMessage={lastMessages}/>
               </li>
             ))}
           </ul>

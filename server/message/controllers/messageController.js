@@ -3,6 +3,19 @@ const Message = require('../models/messageModel');
 const User = require('../../user/models/userModel');
 const { getIo } = require('../../config/socket');
 
+async function updateProfilePics() {
+  try {
+      // Update all documents missing the 'profilePic' field
+      await User.updateMany(
+          { profilePic: { $exists: false } }, // Condition: if 'profilePic' doesn't exist
+          { $set: { profilePic: '' } } // Set the default
+      );
+      console.log('Profile pictures updated successfully');
+  } catch (error) {
+      console.error('Error updating profile pictures:', error);
+  }
+}
+
 const getMessages = async (req, res) => {
     try {
         const uid = req.userId
@@ -91,7 +104,7 @@ const getLastMessages = async (req, res) => {
                   foreignField: "_id",
                   as: "senderInfo",
                   pipeline: [
-                    { $project: { name: 1, email: 1 } }
+                    { $project: { name: 1, email: 1, profilePic: 1 } }
                   ]
                 }
               },
@@ -103,7 +116,7 @@ const getLastMessages = async (req, res) => {
                   foreignField: "_id",
                   as: "receiverInfo",
                   pipeline: [
-                    { $project: { name: 1, email: 1 } }
+                    { $project: { name: 1, email: 1, profilePic: 1 } }
                   ]
                 }
               },
