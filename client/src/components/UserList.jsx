@@ -4,12 +4,15 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { useWindow } from '../hooks/useWindow';
 import UserCard from './UserCard/UserCard';
 import ProfileHeader from './ProfileHeader/ProfileHeader';
+import { useUserContext } from '../hooks/useUserContext';
+import { ACTIONS } from '../context/UserContext';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 function UserList({ onUserSelect, lastUser, lastMessage }) {
-    const [users, setUsers] = useState([]);
-    const [lastMessages, setLastMessages] = useState([]);
+    // const [users, setUsers] = useState([]);
+    const {users, lastMessages, dispatch} = useUserContext();
+    // const [lastMessages, setLastMessages] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [filteredUsers, setFilteredUsers] = useState([]);  
     const overlayRef = useRef(null);
@@ -68,8 +71,9 @@ function UserList({ onUserSelect, lastUser, lastMessage }) {
 
           const lastMessages = messages.map((message) => message.lastMessage);
 
-          setUsers(users);
-          setLastMessages(lastMessages)
+          // setUsers(users);
+          dispatch({ type: ACTIONS.SET_USERS, payload: {users, lastMessages} });
+          // setLastMessages(lastMessages)
         }
       } catch (error) {
         console.log(error)
@@ -129,14 +133,6 @@ function UserList({ onUserSelect, lastUser, lastMessage }) {
     }
   }, [lastUser])
 
-  useEffect(() => {
-    if(lastMessage){
-      console.log('last message', lastMessage)
-      const tempLastMessages = lastMessages.filter((message) => message.senderId !== lastMessage.senderId || message.receiverId !== lastMessage.receiverId);
-      const newLastMessages = [lastMessage, ...tempLastMessages];
-      setLastMessages(newLastMessages);
-    }
-  }, [lastMessage])
 
     return (
       <div className={isChatWindowOpen || isChatInfoOpen? 'user-list hide-user-list' : 'user-list'}>
@@ -164,13 +160,13 @@ function UserList({ onUserSelect, lastUser, lastMessage }) {
           </div>
         )}
 
-        {users.length === 0 ? (
+        {users && users.length === 0 ? (
           <p className='no-user'>
             Add a user to start chatting
           </p>    
         ): (
           <ul>
-            {users.map((user) => (
+            {users && users.map((user) => (
               <li key={user._id} onClick={() => { 
                   if(!isChatWindowOpen){
                     toggleChatWindow()

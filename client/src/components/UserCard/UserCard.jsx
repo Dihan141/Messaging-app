@@ -6,8 +6,7 @@ function UserCard({ user, showLastMessage, lastMessage }) {
     const [message, setMessage] = useState(null)
 
     useEffect(() => {
-        console.log(user)
-        console.log(lastMessage)
+        if(!lastMessage) return
         lastMessage.map((msg) => {
             if(msg.senderId === user._id || msg.receiverId === user._id) {
                 setMessage(msg)

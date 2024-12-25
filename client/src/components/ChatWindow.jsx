@@ -14,10 +14,12 @@ import { LiveAudioVisualizer } from 'react-audio-visualize';
 import { useVoiceVisualizer, VoiceVisualizer } from "react-voice-visualizer";
 import ChatHeader from './ChatHeader/ChatHeader';
 import { useWindow } from '../hooks/useWindow';
+import { useUserContext } from '../hooks/useUserContext';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
-function ChatWindow({ user, setLastUser, setLastMessage }) {
+function ChatWindow({ user, setLastMessage }) {
+  const { userNotFound, notFound, dispatch } = useUserContext()
   const { isChatInfoOpen, isChatWindowOpen, toggleChatWindow } = useWindow() 
   const recorderControls = useVoiceVisualizer();
   // console.log(recorderControls);
@@ -26,14 +28,6 @@ function ChatWindow({ user, setLastUser, setLastMessage }) {
 
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
-
-  //audio recording
-  const [isRecording, setIsRecording] = useState(false)
-  const [audioBlob, setAudioBlob] = useState(null)
-  const [wavesurfer, setWavesurfer] = useState(null)
-  const waveformRef = useRef(null)
-  const mediaRecorderRef = useRef(null)
-  const [mediaRecorder, setMediaRecorder] = useState(null)
 
   const handleResize = () => {
     if(window.innerWidth > 650 && window.innerWidth < 850){
@@ -54,98 +48,34 @@ function ChatWindow({ user, setLastUser, setLastMessage }) {
   }, []);
 
 
-  // const visualizerWrapperRef = useRef(null);
-  // const [wrapperWidth, setWrapperWidth] = useState(0);
-
-  // useEffect(() => {
-  //   // Measure the parent container's width
-  //   const handleResize = () => {
-  //     if (visualizerWrapperRef.current) {
-  //       setWrapperWidth(visualizerWrapperRef.current.offsetWidth);
-  //     }
-  //   };
-
-  //   // Initial size measurement
-  //   handleResize();
-
-  //   // Update size on window resize
-  //   window.addEventListener("resize", handleResize);
-  //   return () => window.removeEventListener("resize", handleResize);
-  // }, []);
-
-  //initialize wavesurfer
-  // useEffect(() => {
-  //   if(waveformRef.current){
-  //     const wavesurfer = WaveSurfer.create({
-  //       container: waveformRef.current,
-  //       waveColor: 'violet',
-  //       progressColor: 'purple',
-  //       cursorWidth: 1,
-  //       barWidth: 3,
-  //       barRadius: 3,
-  //       responsive: true,
-  //       height: 100,
-  //       hideScrollbar: true
-  //     })
-  //     setWavesurfer(wavesurfer)
-  //   }
-  //   return () => wavesurfer && wavesurfer.destroy()
-  // },[])
-
-  //start recording
-  const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-    const recorder = new MediaRecorder(stream)
-    setMediaRecorder(recorder)
-    mediaRecorderRef.current = recorder
-
-    const audioChunks = []
-    recorder.ondataavailable = (e) => {
-      audioChunks.push(e.data)
-    }
-    
-    recorder.onstop = () => {
-      const blob = new Blob(audioChunks, { type: 'audio/webm' })
-      setAudioBlob(blob)
-    }
-
-    recorder.start()
-
-    setIsRecording(true)
-
-    //wavesurfer effects
-    // const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    // const source = audioContext.createMediaStreamSource(stream);
-    // const processor = audioContext.createScriptProcessor(2048, 1, 1);
-
-    // wavesurfer && wavesurfer.backend.setFilter(source);
-    // source.connect(processor);
-    // processor.connect(audioContext.destination);
-
-    // processor.onaudioprocess = (e) => {
-    //   const inputBuffer = e.inputBuffer.getChannelData(0);
-    //   wavesurfer.backend.peaks = inputBuffer;
-    //   wavesurfer.drawBuffer();
-    // };
-  }
-
-  const stopRecording = () => {
-    if(mediaRecorderRef.current){
-      mediaRecorderRef.current.stop()
-    }
-    setIsRecording(false)
-    if (mediaRecorderRef.current?.stream) {
-      mediaRecorderRef.current.stream.getTracks().forEach((track) => track.stop());
-    }
-    wavesurfer && wavesurfer.stop()
-  }
-
   useEffect(() => {
     if(messages.length === 0) return;
     const messagesContainer = document.querySelector('.chat-messages');
     messagesContainer.scrollTop = messagesContainer.scrollHeight;
   }, [messages]);
 
+  useEffect(() => {
+    const getUser = async () => {
+      if(userNotFound){
+        const userResponse = await axios.get(`${backendUrl}/api/user/get/${notFound.uid}`, {
+          headers: {
+            Authorization: `Bearer ${userInfo.user.token}`
+          }
+        })
+    
+        const userData = userResponse.data;
+        console.log('user data', userData)  
+        if(userData.success){
+          dispatch({ type: 'ADD_USER', payload: { user: userData.user, msg: notFound.msg } })
+        }
+      }
+    }
+
+    getUser()
+  }, [userNotFound, user]);
+
+
+  //fetch messages with a particular user
   useEffect(() => {
     if(user){
       socket.emit('joinRoom', currUserId)
@@ -163,10 +93,11 @@ function ChatWindow({ user, setLastUser, setLastMessage }) {
       })
     }
 
+    //realtime message receiving with socket
     socket.on('receiveMessage', (newMessage) => {
       console.log('message received', newMessage)
-      setLastUser(newMessage.senderId)
-      setLastMessage(newMessage)
+      dispatch({ type: 'UPDATE_USERS', payload: {uid: newMessage.senderId, msg: newMessage} })
+      // setLastMessage(newMessage)
       if(newMessage.senderId === user._id){
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
@@ -205,8 +136,9 @@ function ChatWindow({ user, setLastUser, setLastMessage }) {
       }).then((res) => {
         // console.log(res.data)
         setMessages((prevMessages) => [...prevMessages, res.data.message])
-        setLastUser(user._id)
-        setLastMessage(res.data.message)
+        // setLastUser(user._id)
+        dispatch({ type: 'UPDATE_USERS', payload: {uid: user._id, msg: res.data.message} })
+        // setLastMessage(res.data.message)
         setInput('')
       }).catch((err) => {
         console.log(err)
