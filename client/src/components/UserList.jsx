@@ -9,7 +9,7 @@ import { ACTIONS } from '../context/UserContext';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-function UserList({ onUserSelect, lastUser, lastMessage }) {
+function UserList({ onUserSelect }) {
     // const [users, setUsers] = useState([]);
     const {users, lastMessages, dispatch} = useUserContext();
     // const [lastMessages, setLastMessages] = useState([]);
@@ -101,37 +101,37 @@ function UserList({ onUserSelect, lastUser, lastMessage }) {
 
   //Move last user to the top of the list, if the user is already in the list, move it to the top
   //else fetch the user and add it to the top of the list
-  useEffect(() => {
-    console.log('last user', lastUser)  
-    const index = users.findIndex((user) => user._id === lastUser)
-    if(index !== -1){
-      const user = users[index];
-      const newUsers = [...users];
-      newUsers.splice(index, 1);
-      newUsers.unshift(user);
-      setUsers(newUsers);
-    }
-    else {
-      const getUser = async () => {
-        const userResponse = await axios.get(`${backendUrl}/api/user/get/${lastUser}`, {
-          headers: {
-            Authorization: `Bearer ${userInfo.user.token}`
-          }
-        })
+  // useEffect(() => {
+  //   console.log('last user', lastUser)  
+  //   const index = users.findIndex((user) => user._id === lastUser)
+  //   if(index !== -1){
+  //     const user = users[index];
+  //     const newUsers = [...users];
+  //     newUsers.splice(index, 1);
+  //     newUsers.unshift(user);
+  //     setUsers(newUsers);
+  //   }
+  //   else {
+  //     const getUser = async () => {
+  //       const userResponse = await axios.get(`${backendUrl}/api/user/get/${lastUser}`, {
+  //         headers: {
+  //           Authorization: `Bearer ${userInfo.user.token}`
+  //         }
+  //       })
     
-        const userData = userResponse.data;
-        if(userData.success){
-          const user = userData.user;
-          const newUsers = [user, ...users];
-          setUsers(newUsers);
-        }
-      }
+  //       const userData = userResponse.data;
+  //       if(userData.success){
+  //         const user = userData.user;
+  //         const newUsers = [user, ...users];
+  //         setUsers(newUsers);
+  //       }
+  //     }
 
-      if(lastUser){
-        getUser();
-      }
-    }
-  }, [lastUser])
+  //     if(lastUser){
+  //       getUser();
+  //     }
+  //   }
+  // }, [lastUser])
 
 
     return (

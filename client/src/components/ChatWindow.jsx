@@ -18,7 +18,7 @@ import { useUserContext } from '../hooks/useUserContext';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
-function ChatWindow({ user, setLastMessage }) {
+function ChatWindow({ user  }) {
   const { userNotFound, notFound, dispatch } = useUserContext()
   const { isChatInfoOpen, isChatWindowOpen, toggleChatWindow } = useWindow() 
   const recorderControls = useVoiceVisualizer();
@@ -77,8 +77,9 @@ function ChatWindow({ user, setLastMessage }) {
 
   //fetch messages with a particular user
   useEffect(() => {
+    socket.emit('joinRoom', currUserId)
     if(user){
-      socket.emit('joinRoom', currUserId)
+      // socket.emit('joinRoom', currUserId)
 
       axios.get(`${backendUrl}/api/messages/${user._id}`, {
         headers: {
@@ -98,7 +99,7 @@ function ChatWindow({ user, setLastMessage }) {
       console.log('message received', newMessage)
       dispatch({ type: 'UPDATE_USERS', payload: {uid: newMessage.senderId, msg: newMessage} })
       // setLastMessage(newMessage)
-      if(newMessage.senderId === user._id){
+      if(user && newMessage.senderId === user._id){
         setMessages((prevMessages) => [...prevMessages, newMessage]);
       }
     });
@@ -107,6 +108,10 @@ function ChatWindow({ user, setLastMessage }) {
       socket.off('receiveMessage');
     };
   },[user])
+
+  // useEffect(() => {
+    
+  // }, [])
 
   const sendMessage = async () => {
     recorderControls.stopRecording()
@@ -135,6 +140,7 @@ function ChatWindow({ user, setLastMessage }) {
         }
       }).then((res) => {
         // console.log(res.data)
+        console.log('message sent')
         setMessages((prevMessages) => [...prevMessages, res.data.message])
         // setLastUser(user._id)
         dispatch({ type: 'UPDATE_USERS', payload: {uid: user._id, msg: res.data.message} })

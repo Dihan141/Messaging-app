@@ -22,7 +22,14 @@ export const userReducer = (state, action) => {
             const updatedList = state.users.filter((user) => user._id !== action.payload.uid) //might change
             updatedList.unshift(user) //might change
 
-            const updatedMessagesList = state.lastMessages.filter((msg) => msg.senderId !== action.payload.msg.senderId || msg.receiverId !== action.payload.msg.receiverId)
+            const updatedMessagesList = state.lastMessages.filter(
+                (msg) =>
+                    !(
+                        (msg.senderId === action.payload.msg.senderId && msg.receiverId === action.payload.msg.receiverId) ||
+                        (msg.senderId === action.payload.msg.receiverId && msg.receiverId === action.payload.msg.senderId)
+                    )
+            );
+            console.log('updatedMessagesList:', updatedMessagesList)
             updatedMessagesList.unshift(action.payload.msg)
             return {...state, users: updatedList, lastMessages: updatedMessagesList, userNotFound: false }
         case ACTIONS.ADD_USER:
