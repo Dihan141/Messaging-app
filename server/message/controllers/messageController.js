@@ -46,7 +46,7 @@ const postMessages = async (req, res) => {
             audio: messageType === 'audio' ? req.file.path : null
         });
     
-        await message.save();
+        const msg = await message.save();
 
         const sender = await User.findById(senderId);
         const receiver = await User.findById(receiverId);
@@ -58,12 +58,37 @@ const postMessages = async (req, res) => {
         await receiver.save();
 
         const io = getIo();
-        io.to(receiverId).emit('receiveMessage', message);
+        io.to(receiverId).emit('receiveMessage', msg);
 
-        res.status(201).json({ success: true, message });
+        res.status(201).json({ success: true, message: msg });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     } 
+}
+
+const markAsRead = async (req, res) => {
+  try {
+    const uid = req.userId;
+    const { otherUserId } = req.body;
+
+    await Message.updateMany(
+      { senderId: otherUserId, receiverId: uid, read: false },
+      { read: true }
+    );
+    
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+const updateCollection = async (req, res) => {
+    try {
+        await Message.updateMany({}, { $set: { read: false } });
+        res.status(200).json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 }
 
 const getLastMessages = async (req, res) => {
@@ -142,4 +167,6 @@ module.exports = {
     getMessages,
     postMessages,
     getLastMessages,
+    markAsRead,
+    updateCollection,
 }

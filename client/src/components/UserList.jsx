@@ -140,7 +140,7 @@ function UserList({ onUserSelect }) {
         <input type="text" placeholder="Search..." className="search-input" value={searchValue} onChange={handleSearchChange} />
 
         {/* overlay for search results */}
-        {searchValue && isOverlayVisible && (
+        {/* {searchValue && isOverlayVisible && (
           <div className="search-overlay" ref={overlayRef}>
             <ul>
               {filteredUsers.length > 0 ? (
@@ -158,27 +158,50 @@ function UserList({ onUserSelect }) {
               )}
             </ul>
           </div>
-        )}
-
-        {users && users.length === 0 ? (
-          <p className='no-user'>
-            Add a user to start chatting
-          </p>    
-        ): (
-          <ul>
-            {users && users.map((user) => (
-              <li key={user._id} onClick={() => { 
-                  if(!isChatWindowOpen){
-                    toggleChatWindow()
-                  }
-                  onUserSelect(user)
-                }
-              }>
-               <UserCard key={user._id} user={user} showLastMessage={true} lastMessage={lastMessages}/>
-              </li>
-            ))}
-          </ul>
-        )}
+        )} */}
+        { isOverlayVisible ? 
+          <>
+            <div ref={overlayRef}>
+              <ul>
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.map((user) => (
+                    <li key={user._id} onClick={() => {
+                        setSearchValue('')
+                        onUserSelect(user)
+                      }
+                    }>
+                      <UserCard user={user} />
+                    </li>
+                  ))
+                ) : (
+                  <li>No match found</li>
+                )}
+              </ul>
+            </div>
+          </>
+          :
+          <>
+            {users && users.length === 0 ? (
+              <p className='no-user'>
+                Add a user to start chatting
+              </p>    
+            ): (
+              <ul>
+                {users && users.map((user) => (
+                  <li key={user._id} onClick={() => { 
+                      if(!isChatWindowOpen){
+                        toggleChatWindow()
+                      }
+                      onUserSelect(user)
+                    }
+                  }>
+                  <UserCard key={user._id} user={user} showLastMessage={true} lastMessage={lastMessages}/>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+          }
       </div>
     );
 }

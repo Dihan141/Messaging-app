@@ -21,6 +21,10 @@ const messageSchema = new mongoose.Schema({
     audio: {
         type: String
     },
+    read: {
+        type: Boolean,
+        default: false
+    }
 }, {timestamps: true});
 
 module.exports = mongoose.model('Message', messageSchema);
