@@ -6,6 +6,7 @@ export const ACTIONS = {
     SET_USERS: 'SET_USERS',
     UPDATE_USERS: 'UPDATE_USERS',
     ADD_USER: 'ADD_USER',
+    MARK_READ: 'MARK_READ',
 }
 
 export const userReducer = (state, action) => {
@@ -35,6 +36,15 @@ export const userReducer = (state, action) => {
         case ACTIONS.ADD_USER:
             console.log('adding user:', action.payload)
             return { users: [action.payload.user, ...state.users], lastMessages: [action.payload.msg, ...state.lastMessages], userNotFound: false }
+        case ACTIONS.MARK_READ:
+            const { senderId, receiverId } = action.payload
+            const updatedMessages = state.lastMessages.map((msg) => {
+                if (msg.senderId === senderId && msg.receiverId === receiverId) {
+                    return { ...msg, read: true }
+                }
+                return msg
+            })
+            return { ...state, lastMessages: updatedMessages }
         default:
             return state
     }

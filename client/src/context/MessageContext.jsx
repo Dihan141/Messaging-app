@@ -7,7 +7,7 @@ export const MESSAGE_ACTIONS = {
     SET_MESSAGES: 'SET_MESSAGES',
     ADD_MESSAGE: 'ADD_MESSAGE',
     DELETE_MESSAGE: 'DELETE_MESSAGE',
-    UPDATE_MESSAGE: 'UPDATE_MESSAGE'
+    UPDATE_MESSAGE: 'UPDATE_MESSAGE',
 }
 
 export const messageReducer = (state, action) => {
@@ -22,14 +22,14 @@ export const messageReducer = (state, action) => {
 }
 
 export const MessageContextProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(messageReducer, {
+    const [state, dispatchMsg] = useReducer(messageReducer, {
         messages: []
     })
 
     console.log('MessageContext state:', state)
 
     return (
-        <MessageContext.Provider value={{ ...state, dispatch }}>
+        <MessageContext.Provider value={{ ...state, dispatchMsg }}>
             { children }
         </MessageContext.Provider>
     )

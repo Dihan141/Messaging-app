@@ -15,18 +15,22 @@ import { useVoiceVisualizer, VoiceVisualizer } from "react-voice-visualizer";
 import ChatHeader from './ChatHeader/ChatHeader';
 import { useWindow } from '../hooks/useWindow';
 import { useUserContext } from '../hooks/useUserContext';
+import { useMessageContext } from '../hooks/useMessageContext';
+import { MESSAGE_ACTIONS } from '../context/MessageContext';
+import { ACTIONS } from '../context/UserContext';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
 function ChatWindow({ user  }) {
   const { userNotFound, notFound, dispatch } = useUserContext()
+  const { messages, dispatchMsg } = useMessageContext()
   const { isChatInfoOpen, isChatWindowOpen, toggleChatWindow } = useWindow() 
   const recorderControls = useVoiceVisualizer();
   // console.log(recorderControls);
   const userInfo = useAuthContext()
   const currUserId = userInfo.user.newUser.id
 
-  const [messages, setMessages] = useState([])
+  // const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
 
   const handleResize = () => {
@@ -88,7 +92,7 @@ function ChatWindow({ user  }) {
       }).then((res) => {
         // console.log('working')
         // console.log(res.data)
-        setMessages(res.data.messages)
+        dispatchMsg({ type: MESSAGE_ACTIONS.SET_MESSAGES, payload: res.data.messages })
       }).catch((err) => {
         console.log(err)
       })
@@ -100,7 +104,8 @@ function ChatWindow({ user  }) {
       dispatch({ type: 'UPDATE_USERS', payload: {uid: newMessage.senderId, msg: newMessage} })
       // setLastMessage(newMessage)
       if(user && newMessage.senderId === user._id){
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        dispatchMsg({type: MESSAGE_ACTIONS.ADD_MESSAGE, payload: newMessage})
+        dispatch({ type: ACTIONS.MARK_READ, payload: { senderId: user._id, receiverId: currUserId } })
       }
     });
 
@@ -109,9 +114,25 @@ function ChatWindow({ user  }) {
     };
   },[user])
 
-  // useEffect(() => {
-    
-  // }, [])
+  //mark messages as read
+  useEffect(() => { 
+    if(user){
+      axios.post(`${backendUrl}/api/messages/mark-as-read`, { otherUserId: user._id }, 
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.user.token}`
+          }
+        })
+        .then((res) => {
+          if(res.data.success){
+            dispatch({ type: 'MARK_READ', payload: { senderId: user._id, receiverId: currUserId } })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    }
+  }, [user])
 
   const sendMessage = async () => {
     recorderControls.stopRecording()
@@ -141,7 +162,7 @@ function ChatWindow({ user  }) {
       }).then((res) => {
         // console.log(res.data)
         console.log('message sent')
-        setMessages((prevMessages) => [...prevMessages, res.data.message])
+        dispatchMsg({type: MESSAGE_ACTIONS.ADD_MESSAGE, payload: res.data.message})
         // setLastUser(user._id)
         dispatch({ type: 'UPDATE_USERS', payload: {uid: user._id, msg: res.data.message} })
         // setLastMessage(res.data.message)
@@ -158,7 +179,7 @@ function ChatWindow({ user  }) {
         <ChatHeader user={user} />
         <div className="chat-messages">
         {/* Here you can render message history or live chat messages */}
-          {messages.map((msg, index) => (
+          {messages && messages.map((msg, index) => (
               <Message key={index} message={msg} isSender={msg.senderId === currUserId} />
           ))}
         </div>

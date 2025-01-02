@@ -38,3 +38,13 @@ p {
     white-space: nowrap; /* Prevent text wrapping */
     max-width: 100%; /* Constrain the text to the parent width */
 }
+
+.last-message-unread {
+    font-weight: bold;
+    font-size: 12px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    white-space: nowrap; /* Prevent text wrapping */
+    max-width: 100%; /* Constrain the text to the parent width */
+}
