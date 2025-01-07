@@ -2,10 +2,21 @@ import React, { useEffect, useState } from 'react'
 import defaultImg from '../../assets/default-profile.png'
 import './usercard.css'
 import { useAuthContext } from '../../hooks/useAuthContext'
+import TimeAgo from 'react-timeago'
 
 function UserCard({ user, showLastMessage, lastMessage }) {
     const [message, setMessage] = useState(null)
     const userInfo = useAuthContext()
+
+    const formattedString = (value, unit, suffix) => {
+        if(unit === 'second') return '- now'
+        if(unit === 'minute') return '- ' + value + 'm'
+        if(unit === 'hour') return '- ' + value + 'h'
+        if(unit === 'day') return '- ' + value + 'd'
+        if(unit === 'week') return '- ' + value + 'w'
+        if(unit === 'month') return '- ' + value + 'm'
+        if(unit === 'year') return '- ' + value + 'y'
+    }
 
     useEffect(() => {
         if(!lastMessage) return
@@ -19,12 +30,22 @@ function UserCard({ user, showLastMessage, lastMessage }) {
     <div className='user-card'>
         <img src={user.profilePic || defaultImg} alt="Profile" className='profile-pic' />
         {showLastMessage ? (
-            <div className='with-last-message'>
-                <p className='username'>{user.name}</p>
-                <p className={message && (message.senderId === userInfo.user.newUser.id || message.read) ? 'last-message' : 'last-message-unread'}>
-                    {message && (message.messageType === 'audio' ? 'sent an audio message': message.content)}
-                </p>
-            </div>
+            <>
+                <div className='with-last-message'>
+                    <p className='username'>{user.name}</p>
+                    { message &&               
+                    (<div className='message-with-time'>
+                        <p className={message.senderId === userInfo.user.newUser.id || message.read ? 'last-message' : 'last-message-unread'}>
+                            {message.messageType === 'audio' ? 'sent an audio message': message.content}
+                        </p>
+                        <TimeAgo className='message-time' date={message && message.createdAt} formatter={
+                            formattedString
+                        }/>
+                    </div>) 
+                    }
+                </div>
+                <div className={message.senderId === userInfo.user.newUser.id || message.read ? '': 'unread-dot'}/>
+            </>
         ):<p>{user.name}</p>}
     </div>
   )

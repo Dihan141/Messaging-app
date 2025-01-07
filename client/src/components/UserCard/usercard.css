@@ -48,3 +48,21 @@ p {
     white-space: nowrap; /* Prevent text wrapping */
     max-width: 100%; /* Constrain the text to the parent width */
 }
+
+.message-with-time {
+    display: flex;
+    gap: 5px;
+}
+
+.message-time {
+    color: #717171;
+    font-size: 12px;
+}
+
+.unread-dot {
+    width: 10px;
+    height: 10px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background-color: white;
+}
