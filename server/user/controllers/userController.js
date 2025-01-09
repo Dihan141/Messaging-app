@@ -1,6 +1,18 @@
 const mongoose = require('mongoose')
 const User = require('../models/userModel')
 
+const updateUserCollection = async () => {
+    try {
+        await User.updateMany(
+            {},
+            { $set: {active: false, lastActive: new Date(), socketId: ''}, }
+        )
+        console.log('Profile pictures updated successfully')
+    } catch (error) {
+        console.error('Error updating profile pictures:', error)
+    }
+}
+
 const getUsersBySearch = async (req, res) => {
     try {
         const { query } = req.params

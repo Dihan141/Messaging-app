@@ -7,6 +7,7 @@ export const ACTIONS = {
     UPDATE_USERS: 'UPDATE_USERS',
     ADD_USER: 'ADD_USER',
     MARK_READ: 'MARK_READ',
+    SET_ACTIVE: 'SET_ACTIVE'
 }
 
 export const userReducer = (state, action) => {
@@ -45,6 +46,20 @@ export const userReducer = (state, action) => {
                 return msg
             })
             return { ...state, lastMessages: updatedMessages }
+        case ACTIONS.SET_ACTIVE:
+            const { activeUsers } = action.payload
+            const updatedUsers = state.users.map((user) => {
+                if(activeUsers.includes(user._id)){
+                    return {...user, active: true}
+                }
+                else {
+                    if(user.active){
+                        return {...user, active: false, lastActive: new Date()}
+                    }
+                    return user
+                }
+            })
+            return {...state, users: updatedUsers}
         default:
             return state
     }

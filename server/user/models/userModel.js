@@ -23,6 +23,18 @@ const userSchema = schema({
         type: Boolean,
         default: false
     },
+    active: {
+        type: Boolean,
+        default: false
+    },
+    socketId: {
+        type: String,
+        default: ''
+    },
+    lastActive: {
+        type: Date,
+        default: ''
+    },
     contacts: [{
         type: schema.Types.ObjectId,
         ref: 'User'

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, act } from 'react'
 import { IoMdSend } from "react-icons/io";
 import { GrGallery } from "react-icons/gr";
 import { FaMicrophone } from "react-icons/fa6";
@@ -78,10 +78,18 @@ function ChatWindow({ user  }) {
     getUser()
   }, [userNotFound, user]);
 
+  useEffect(() => {
+    socket.emit('joinRoom', currUserId)
+    socket.on('get-online-users', (users) => {
+      console.log('online users', users)
+      dispatch({ type: ACTIONS.SET_ACTIVE, payload: { activeUsers: users.map((user) => user._id) } })
+    })
+  }, [])
+
 
   //fetch messages with a particular user
   useEffect(() => {
-    socket.emit('joinRoom', currUserId)
+    // socket.emit('joinRoom', currUserId)
     if(user){
       // socket.emit('joinRoom', currUserId)
 

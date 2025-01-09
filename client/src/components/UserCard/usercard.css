@@ -66,3 +66,33 @@ p {
     border-radius: 50%;
     background-color: white;
 }
+
+.profile-container {
+    position: relative;
+    display: inline-block;
+}
+
+
+.active-status {
+    position: absolute;
+    bottom: 5px; /* Adjust distance from the bottom */
+    right: 0px; /* Adjust distance from the right */
+    width: 10px; /* Adjust size of the dot */
+    height: 10px; /* Adjust size of the dot */
+    background-color: #00ff00; /* Green color */
+    border: 2px solid white; /* Optional: border to create separation */
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.offline-status {
+    position: absolute;
+    padding: 2px;
+    bottom: 5px; /* Adjust distance from the bottom */
+    right: 0px; /* Adjust distance from the right */
+    border-radius: 50px;
+    z-index: 1;
+    color: black;
+    font-size: 12px;
+    background-color: #93da93; /* Gray color */
+}

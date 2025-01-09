@@ -129,7 +129,7 @@ const getLastMessages = async (req, res) => {
                   foreignField: "_id",
                   as: "senderInfo",
                   pipeline: [
-                    { $project: { name: 1, email: 1, profilePic: 1 } }
+                    { $project: { name: 1, email: 1, profilePic: 1, active: 1, lastActive: 1 } }
                   ]
                 }
               },
@@ -141,7 +141,7 @@ const getLastMessages = async (req, res) => {
                   foreignField: "_id",
                   as: "receiverInfo",
                   pipeline: [
-                    { $project: { name: 1, email: 1, profilePic: 1 } }
+                    { $project: { name: 1, email: 1, profilePic: 1, active: 1, lastActive: 1 } }
                   ]
                 }
               },
