@@ -8,8 +8,8 @@ function Home() {
 
   return (
     <div className="chatapp">
-      <UserList onUserSelect={setUser}/>
-      <ChatWindow user={user}/>
+      <UserList />
+      <ChatWindow />
       <ChatInfo />
     </div>
   )

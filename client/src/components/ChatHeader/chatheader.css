@@ -8,7 +8,6 @@
   
 .chat-header h2 {
     margin: 0;
-    flex: 1;
 }
 
 .header-icon {
@@ -25,6 +24,31 @@
 
 .chat-window-back-icon {
     display: none;
+}
+
+.name-image-container {
+    display: flex;
+    align-items: flex-start;
+    flex: 1;
+    gap: 10px;
+}
+
+.profile-pic-chat {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.name-status h2 {
+    font-size: 22px;
+}
+
+.name-status p {
+    font-size: 14px;
+    color: #A0A0A0;
+    margin: 0;
+    padding-top: 5px;
 }
 
 @media (max-width: 650px) {

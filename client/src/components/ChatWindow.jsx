@@ -9,8 +9,6 @@ import io from 'socket.io-client'
 import { useAuthContext } from '../hooks/useAuthContext'
 import Message from './Message/Message'
 import axios from 'axios'
-import WaveSurfer from 'wavesurfer.js'
-import { LiveAudioVisualizer } from 'react-audio-visualize';
 import { useVoiceVisualizer, VoiceVisualizer } from "react-voice-visualizer";
 import ChatHeader from './ChatHeader/ChatHeader';
 import { useWindow } from '../hooks/useWindow';
@@ -18,11 +16,14 @@ import { useUserContext } from '../hooks/useUserContext';
 import { useMessageContext } from '../hooks/useMessageContext';
 import { MESSAGE_ACTIONS } from '../context/MessageContext';
 import { ACTIONS } from '../context/UserContext';
+import { useChatUserContext } from '../hooks/useChatUserContext';
+import { CHAT_USER_ACTIONS } from '../context/ChatUserContext';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
-function ChatWindow({ user  }) {
+function ChatWindow() {
   const { userNotFound, notFound, dispatch } = useUserContext()
+  const { chatUser, dispatchChatUser } = useChatUserContext()
   const { messages, dispatchMsg } = useMessageContext()
   const { isChatInfoOpen, isChatWindowOpen, toggleChatWindow } = useWindow() 
   const recorderControls = useVoiceVisualizer();
@@ -76,24 +77,26 @@ function ChatWindow({ user  }) {
     }
 
     getUser()
-  }, [userNotFound, user]);
+  }, [userNotFound, chatUser]);
 
   useEffect(() => {
     socket.emit('joinRoom', currUserId)
     socket.on('get-online-users', (users) => {
       console.log('online users', users)
+      dispatchChatUser({ type: CHAT_USER_ACTIONS.UPDATE_STATUS, payload: { activeUsers: users.map((user) => user._id) } })
       dispatch({ type: ACTIONS.SET_ACTIVE, payload: { activeUsers: users.map((user) => user._id) } })
     })
   }, [])
 
 
+
   //fetch messages with a particular user
   useEffect(() => {
     // socket.emit('joinRoom', currUserId)
-    if(user){
+    if(chatUser){
       // socket.emit('joinRoom', currUserId)
 
-      axios.get(`${backendUrl}/api/messages/${user._id}`, {
+      axios.get(`${backendUrl}/api/messages/${chatUser._id}`, {
         headers: {
           Authorization: `Bearer ${userInfo.user.token}`
         }
@@ -111,21 +114,21 @@ function ChatWindow({ user  }) {
       console.log('message received', newMessage)
       dispatch({ type: 'UPDATE_USERS', payload: {uid: newMessage.senderId, msg: newMessage} })
       // setLastMessage(newMessage)
-      if(user && newMessage.senderId === user._id){
+      if(chatUser && newMessage.senderId === chatUser._id){
         dispatchMsg({type: MESSAGE_ACTIONS.ADD_MESSAGE, payload: newMessage})
-        dispatch({ type: ACTIONS.MARK_READ, payload: { senderId: user._id, receiverId: currUserId } })
+        dispatch({ type: ACTIONS.MARK_READ, payload: { senderId: chatUser._id, receiverId: currUserId } })
       }
     });
 
     return () => {
       socket.off('receiveMessage');
     };
-  },[user])
+  },[chatUser])
 
   //mark messages as read
   useEffect(() => { 
-    if(user){
-      axios.post(`${backendUrl}/api/messages/mark-as-read`, { otherUserId: user._id }, 
+    if(chatUser){
+      axios.post(`${backendUrl}/api/messages/mark-as-read`, { otherUserId: chatUser._id }, 
         {
           headers: {
             Authorization: `Bearer ${userInfo.user.token}`
@@ -133,14 +136,14 @@ function ChatWindow({ user  }) {
         })
         .then((res) => {
           if(res.data.success){
-            dispatch({ type: 'MARK_READ', payload: { senderId: user._id, receiverId: currUserId } })
+            dispatch({ type: 'MARK_READ', payload: { senderId: chatUser._id, receiverId: currUserId } })
           }
         })
         .catch((err) => {
           console.log(err)
         })
     }
-  }, [user])
+  }, [chatUser])
 
   const sendMessage = async () => {
     recorderControls.stopRecording()
@@ -155,7 +158,7 @@ function ChatWindow({ user  }) {
       // }
 
       formData.append('senderId', currUserId)
-      formData.append('receiverId', user._id)
+      formData.append('receiverId', chatUser._id)
       formData.append('content', input)
       formData.append('messageType', recorderControls.isAvailableRecordedAudio? 'audio': 'text')
       if(recorderControls.isAvailableRecordedAudio){
@@ -172,7 +175,7 @@ function ChatWindow({ user  }) {
         console.log('message sent')
         dispatchMsg({type: MESSAGE_ACTIONS.ADD_MESSAGE, payload: res.data.message})
         // setLastUser(user._id)
-        dispatch({ type: 'UPDATE_USERS', payload: {uid: user._id, msg: res.data.message} })
+        dispatch({ type: 'UPDATE_USERS', payload: {uid: chatUser._id, msg: res.data.message} })
         // setLastMessage(res.data.message)
         setInput('')
       }).catch((err) => {
@@ -183,8 +186,8 @@ function ChatWindow({ user  }) {
 
   return (
     <div className={isChatInfoOpen || !isChatWindowOpen ? 'chat-window hide-chat-window': 'chat-window'}>  
-      { user ? <div className="message-window">
-        <ChatHeader user={user} />
+      { chatUser ? <div className="message-window">
+        <ChatHeader user={chatUser} />
         <div className="chat-messages">
         {/* Here you can render message history or live chat messages */}
           {messages && messages.map((msg, index) => (

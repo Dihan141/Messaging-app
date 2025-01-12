@@ -6,10 +6,12 @@ import UserCard from './UserCard/UserCard';
 import ProfileHeader from './ProfileHeader/ProfileHeader';
 import { useUserContext } from '../hooks/useUserContext';
 import { ACTIONS } from '../context/UserContext';
+import { useChatUserContext } from '../hooks/useChatUserContext';
+import { CHAT_USER_ACTIONS } from '../context/ChatUserContext';
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-function UserList({ onUserSelect }) {
+function UserList() {
     // const [users, setUsers] = useState([]);
     const {users, lastMessages, dispatch} = useUserContext();
     // const [lastMessages, setLastMessages] = useState([]);
@@ -19,6 +21,7 @@ function UserList({ onUserSelect }) {
     const [isOverlayVisible, setIsOverlayVisible] = useState(false);  
     const [debounceTimer, setDebounceTimer] = useState(null); 
     const { isChatWindowOpen, isChatInfoOpen, toggleChatWindow} = useWindow();
+    const { dispatchChatUser } = useChatUserContext();
 
     const userInfo = useAuthContext();
 
@@ -167,7 +170,8 @@ function UserList({ onUserSelect }) {
                   filteredUsers.map((user) => (
                     <li key={user._id} onClick={() => {
                         setSearchValue('')
-                        onUserSelect(user)
+                        // onUserSelect(user)
+                        dispatchChatUser({type: CHAT_USER_ACTIONS.SET_USER, payload: user})
                       }
                     }>
                       <UserCard user={user} />
@@ -192,7 +196,8 @@ function UserList({ onUserSelect }) {
                       if(!isChatWindowOpen){
                         toggleChatWindow()
                       }
-                      onUserSelect(user)
+                      // onUserSelect(user)
+                      dispatchChatUser({type: CHAT_USER_ACTIONS.SET_USER, payload: user}) 
                     }
                   }>
                   <UserCard key={user._id} user={user} showLastMessage={true} lastMessage={lastMessages}/>
