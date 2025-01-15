@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import './Message.css';
 import { useVoiceVisualizer, VoiceVisualizer } from "react-voice-visualizer";
-import { FaPlay, FaPause } from "react-icons/fa";
+import UserMessage from './UserMessage/UserMessage';
 
-function Message({ message, isSender }) {
+function Message({ message, isSender, lastMsgInGrp, position }) {
   const { senderId, receiverId, content, messageType, audio } = message;
   const recorderControls = useVoiceVisualizer();
-  const [audioBlob, setAudioBlob] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [error, setError] = useState(null);
 
@@ -45,32 +44,20 @@ function Message({ message, isSender }) {
   };
 
   return (
-    <div className={`msg-container ${isSender ? 'pinned-right' : ''}`}>
-      {messageType === 'audio' ? (
-        <div className='audio-msg'>
-        {error ? <i>{error}</i> : 
-        <>
-          <button onClick={togglePlayPause} className='audio-btn'>
-            {!recorderControls.isPausedRecordedAudio ? 
-            <FaPause color='white' /> 
-            : <FaPlay color='white' />}
-          </button>
-          <VoiceVisualizer
-            controls={recorderControls}
-            isDefaultUIShown={false}
-            isControlPanelShown={false} // Don't show the default UI
-            secondaryBarColor="white"
-            rounded={2}
-            height={50}
-            width={150}
-          />
-          <p className='audio-duration'>{parseInt(recorderControls.duration/60)}:{parseInt(recorderControls.duration%60)}</p>
-        </>}
-        </div>
-      ) : (
-        <p>{content}</p>
-      )}
-    </div>
+    // <>
+    //   {messageType == 'audio'? 
+    //   <VoiceMessage isSender={isSender} recorderControls={recorderControls} error={error} togglePlayPause={togglePlayPause} />
+    //   :<TextMessage isSender={isSender} content={content}/>}
+    // </>
+    <UserMessage 
+      isSender={isSender} 
+      message={message} 
+      recorderControls={recorderControls} 
+      error={error} 
+      togglePlayPause={togglePlayPause} 
+      lastMsgInGrp={lastMsgInGrp}
+      position={position}
+    />
   );
 }
 

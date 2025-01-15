@@ -184,15 +184,52 @@ function ChatWindow() {
     }
   }
 
+  const lastInGroup = (index) => {
+    return index == messages.length-1 || (messages[index+1] && messages[index+1].senderId != chatUser._id)
+  }
+
+  const firstMsg = (index) => {
+    return messages[index] && 
+           (index < messages.length - 1 && 
+           messages[index].senderId === messages[index+1].senderId && 
+           index > 0 && 
+           messages[index].senderId !== messages[index-1]?.senderId) ||
+           index == 0 && messages[index].senderId === messages[index+1].senderId ;
+  };
+  
+
+  const middleMsg = (index) => {
+    return messages[index] && 
+           index > 0 && 
+           index < messages.length - 1 &&
+           (messages[index].senderId === messages[index+1].senderId && 
+           messages[index].senderId === messages[index-1].senderId);
+  };
+  
+
+  const lastMsg = (index) => {
+    return messages[index] && 
+           index > 0 && 
+           (messages[index].senderId === messages[index-1].senderId && 
+            messages[index].senderId !== messages[index+1]?.senderId);
+  };
+  
+
   return (
     <div className={isChatInfoOpen || !isChatWindowOpen ? 'chat-window hide-chat-window': 'chat-window'}>  
       { chatUser ? <div className="message-window">
         <ChatHeader user={chatUser} />
         <div className="chat-messages">
         {/* Here you can render message history or live chat messages */}
-          {messages && messages.map((msg, index) => (
-              <Message key={index} message={msg} isSender={msg.senderId === currUserId} />
-          ))}
+          {messages && messages.map((msg, index) => {
+              const lastMsgInGrp = lastInGroup(index)
+              const msgPosition = {
+                firstMsg: firstMsg(index),
+                middleMsg: middleMsg(index),
+                lastMsg: lastMsg(index)
+              }
+              return <Message key={index} message={msg} isSender={msg.senderId === currUserId} lastMsgInGrp={lastMsgInGrp} position={msgPosition}/>
+          })}
         </div>
         <div className="input-container">
           <button className='message-input-btn'  onClick={() => {}} >

@@ -5,7 +5,7 @@
     background-color: #61afed; /* Light blue background for received messages */
     color: #fff; /* White text */
     padding: 10px 20px; /* Add padding for a balanced look */
-    margin: 10px 0; /* Space between messages */
+    margin: 2px 0; /* Space between messages */
     border-radius: 25px; /* Rounded corners for the bubble */
     word-wrap: break-word; /* Ensure long words break within the container */
     white-space: pre-wrap; /* Retain spaces and line breaks */
@@ -15,12 +15,37 @@
     transition: transform 0.2s ease-in-out; /* Smooth animation on hover */
 }
 
+.msg-container.msg-container-first {
+    border-radius: 25px 25px 25px 5px; /* Rounded corners for the bubble */
+}
+
+.msg-container.msg-container-middle {
+    border-radius: 5px 25px 25px 5px; /* Rounded corners for the bubble */
+}
+
+.msg-container.msg-container-last {
+    border-radius: 5px 25px 25px 25px; /* Rounded corners for the bubble */
+}
+
+.msg-container.msg-container-first-sender {
+    border-radius: 25px 25px 5px 25px; /* Rounded corners for the bubble */
+}
+
+.msg-container.msg-container-middle-sender {
+    border-radius: 25px 5px 5px 25px; /* Rounded corners for the bubble */
+}
+
+.msg-container.msg-container-last-sender {
+    border-radius: 25px 5px 25px 25px; /* Rounded corners for the bubble */
+}
+
 /* Message alignment for sender */
 .msg-container.pinned-right {
     align-self: flex-end; /* Align the sender's message to the right */
     background-color: #121212; /* Dark background for sender's message */
     color: #f1f1f1; /* Lighter text for contrast */
     margin-right: 10px;
+    margin-left: auto;
 }
 
 /* Hover effect to make messages pop */
@@ -66,4 +91,26 @@
     background-color: transparent;
     border: none;
     margin-right: 10px;
+}
+
+.image-message {
+    display: flex;
+    flex-direction: row; /* Keep items in a row */
+    align-items: center; /* Align items at the top by default */
+    gap: 5px; /* Add spacing between items if needed */
+}
+
+.no-image-message {
+    display: flex;
+    flex-direction: row; /* Keep items in a row */
+    align-items: center; /* Align items at the top by default */
+    gap: 5px; /* Add spacing between items if needed */
+    margin-left: 35px;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
 }
