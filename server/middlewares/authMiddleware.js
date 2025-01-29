@@ -19,7 +19,7 @@ const protect = async (req, res, next) => {
         req.userId = uid;
         next();
     } catch (error) {
-        res.status(501).json({msg: 'Internal server error.', success: false, error: error.message});
+        res.status(201).json({msg: 'Internal server error.', success: false, error: error.message});
     }
 }
 

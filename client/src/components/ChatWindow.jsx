@@ -18,6 +18,7 @@ import { MESSAGE_ACTIONS } from '../context/MessageContext';
 import { ACTIONS } from '../context/UserContext';
 import { useChatUserContext } from '../hooks/useChatUserContext';
 import { CHAT_USER_ACTIONS } from '../context/ChatUserContext';
+import { useMessageSecurityContext } from '../hooks/useMessageSecurityContext';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
@@ -30,6 +31,8 @@ function ChatWindow() {
   // console.log(recorderControls);
   const userInfo = useAuthContext()
   const currUserId = userInfo.user.newUser.id
+
+  const { currUserConnectionStatus, chatUserConnectionStatus, dispatchSecurityAction } = useMessageSecurityContext()
 
   // const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
@@ -88,6 +91,31 @@ function ChatWindow() {
     })
   }, [])
 
+  //get and set connection status
+  useEffect(() => {
+    const getConnectionStatus = async(id) => {
+      const response = await axios.get(`${backendUrl}/api/connections/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${userInfo.user.token}`
+          }
+        }
+      )
+
+      return response.data
+    }
+    const fetchStatuses = async () => {
+      if (chatUser) {
+        const currUserConStatus = await getConnectionStatus(currUserId);
+        const chatUserConStatus = await getConnectionStatus(chatUser._id);
+  
+        console.log(currUserConStatus);
+        console.log(chatUserConStatus);
+      }
+    };
+
+    fetchStatuses()
+  }, [chatUser])
 
 
   //fetch messages with a particular user

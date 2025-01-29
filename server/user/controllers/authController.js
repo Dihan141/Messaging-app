@@ -77,7 +77,12 @@ const register = async (req, res) => {
     }
 }
 
+const tokenCheck = async (req, res) => {
+    res.status(200).json({success: true})
+}
+
 module.exports = {
     login,
-    register
+    register,
+    tokenCheck
 }

@@ -14,12 +14,12 @@ function ChatHeader({ user }) {
 
   const formattedString = (value, unit, suffix) => {
     if(unit === 'second') return 'Active now'
-    if(unit === 'minute') return 'Active ' + value + 'm ' + suffix
-    if(unit === 'hour') return 'Active ' + value + 'h ' + suffix
-    if(unit === 'day') return 'Active ' + value + 'd ' + suffix
-    if(unit === 'week') return 'Active ' + value + 'w ' + suffix
-    if(unit === 'month') return 'Active ' + value + 'm ' + suffix
-    if(unit === 'year') return 'Active ' + value + 'y ' + suffix
+    if(unit === 'minute') return 'Active ' + value + 'm ' + 'ago'
+    if(unit === 'hour') return 'Active ' + value + 'h ' + 'ago'
+    if(unit === 'day') return 'Active ' + value + 'd ' + 'ago'
+    if(unit === 'week') return 'Active ' + value + 'w ' + 'ago'
+    if(unit === 'month') return 'Active ' + value + 'm ' + 'ago'
+    if(unit === 'year') return 'Active ' + value + 'y ' + 'ago'
 }
 
   return (
