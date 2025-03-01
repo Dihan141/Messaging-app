@@ -3,7 +3,7 @@ const Connection = require('../models/connectionsModel');
 const getConnection = async (req, res) => {
     try {
         const { id } = req.params
-        const connection = await Connection.find({ uid: id })
+        const connection = await Connection.findOne({ uid: id })
         res.status(200).json({ success: true, connection })
     } catch (err) {
         res.status(500).json({ success: false, message: err.message });
@@ -14,6 +14,11 @@ const pendingUser = async (req, res) => {
     try {
         const { otherUid } = req.body
         const connection = await Connection.findOne({ uid: req.userId })
+
+        if(connection.approved.includes(otherUid)){
+            const filteredaApprovedList = connection.approved.filter(id => id != otherUid)
+            connection.approved = filteredaApprovedList
+        }
 
         if(connection.pending.includes(otherUid)){
             return res.status(200).json({ success: false, message: 'user already in pending'})

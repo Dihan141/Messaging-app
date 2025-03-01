@@ -19,6 +19,8 @@ import { ACTIONS } from '../context/UserContext';
 import { useChatUserContext } from '../hooks/useChatUserContext';
 import { CHAT_USER_ACTIONS } from '../context/ChatUserContext';
 import { useMessageSecurityContext } from '../hooks/useMessageSecurityContext';
+import { MESSAGE_SECURITY_ACTIONS } from '../context/MessageSecurityContext';
+import { acceptUser } from '../Utils/MessageSecurity';
 const backendUrl = import.meta.env.VITE_BACKEND_URL
 const socket = io(backendUrl)
 
@@ -28,7 +30,7 @@ function ChatWindow() {
   const { messages, dispatchMsg } = useMessageContext()
   const { isChatInfoOpen, isChatWindowOpen, toggleChatWindow } = useWindow() 
   const recorderControls = useVoiceVisualizer();
-  // console.log(recorderControls);
+  console.log(recorderControls.recordedBlob);
   const userInfo = useAuthContext()
   const currUserId = userInfo.user.newUser.id
 
@@ -111,6 +113,7 @@ function ChatWindow() {
   
         console.log(currUserConStatus);
         console.log(chatUserConStatus);
+        dispatchSecurityAction({ type: MESSAGE_SECURITY_ACTIONS.SET_CONNECTION_STATUS, payload:{currUserConStatus, chatUserConStatus, currUserId, chatUserId: chatUser._id}})
       }
     };
 
@@ -241,6 +244,72 @@ function ChatWindow() {
            (messages[index].senderId === messages[index-1].senderId && 
             messages[index].senderId !== messages[index+1]?.senderId);
   };
+
+  //displaying input status if conn is approved from both side, show connection status if any user in blocklist or pending
+  const renderConStatus = () => {
+    if(currUserConnectionStatus == 'approved' && chatUserConnectionStatus == 'approved'){
+      return <div className="input-container">
+        <button className='message-input-btn'  onClick={() => {}} >
+          <GrGallery size='25px' color='white' />
+        </button>
+        <button className='message-input-btn'  onClick={recorderControls.isRecordingInProgress? recorderControls.stopRecording: recorderControls.startRecording} >
+          <FaMicrophone size='25px' color={recorderControls.isRecordingInProgress? 'red': 'white'} />
+        </button>
+        {!recorderControls.isCleared &&
+          <button className='message-input-btn' onClick={recorderControls.togglePauseResume}>
+            {(recorderControls.isPausedRecording && !recorderControls.isPausedRecordedAudio) || (!recorderControls.isPausedRecording && recorderControls.isPausedRecordedAudio)? 
+            <FaPlay size='25px' color='white'/> : <IoIosPause size='25px' color='white'/>}
+          </button>
+        }
+        {
+          recorderControls.isRecordingInProgress || !recorderControls.isCleared?
+          <VoiceVisualizer
+            controls={recorderControls} 
+            isDefaultUIShown={false} 
+            isControlPanelShown={false} 
+            onlyRecording={false}
+            secondaryBarColor='white'
+            rounded={2}
+            height={50}
+            mainContainerClassName='audio-visualizer'
+            canvasContainerClassName='canvas-container'
+          />
+          : <input type="text" placeholder="Type a message..." className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
+        }
+        {!recorderControls.isCleared &&
+          (<button className='message-input-btn' onClick={recorderControls.clearCanvas}>
+            <ImBin2 size='25px' color='white'/>
+          </button>)
+        }
+        <button className='message-input-btn'  onClick={sendMessage} >
+          <IoMdSend size='25px' color='white' />
+        </button>
+      </div>
+    } else if(currUserConnectionStatus == 'blocked' && chatUserConnectionStatus == 'approved') {
+      return <div className="blocked-user">
+        <div className="blocked-section">
+          <p>You've blocked {chatUser.name}</p>
+          <p>You can't message or call them in this chat and you won't receive their message or calls.</p>
+          <div className="block-btn-section">
+            <button className='unblock-btn'>Unblock</button>
+            <button className='delete-btn'>Delete</button>
+          </div>
+        </div>
+      </div>
+    } else if(currUserConnectionStatus == 'approved' && chatUserConnectionStatus == 'blocked') {
+      return <div className='blocked-by-user'>
+        <p>You have been blocked by this user.</p>
+      </div>
+    } else if (currUserConnectionStatus == 'pending' && chatUserConnectionStatus == 'approved') {
+      return <div className="pending-user">
+        <p>{chatUser.name} is trying to message you.</p>
+        <div className="pending-btn-section">
+          <button className='pending-accept-btn' onClick={() => acceptUser(userInfo, chatUser._id)}>Accept</button>
+          <button className='pending-block-btn'>Block</button>
+        </div>
+      </div>
+    }
+  }
   
 
   return (
@@ -259,43 +328,7 @@ function ChatWindow() {
               return <Message key={index} message={msg} isSender={msg.senderId === currUserId} lastMsgInGrp={lastMsgInGrp} position={msgPosition}/>
           })}
         </div>
-        <div className="input-container">
-          <button className='message-input-btn'  onClick={() => {}} >
-            <GrGallery size='25px' color='white' />
-          </button>
-          <button className='message-input-btn'  onClick={recorderControls.isRecordingInProgress? recorderControls.stopRecording: recorderControls.startRecording} >
-            <FaMicrophone size='25px' color={recorderControls.isRecordingInProgress? 'red': 'white'} />
-          </button>
-          {!recorderControls.isCleared &&
-            <button className='message-input-btn' onClick={recorderControls.togglePauseResume}>
-              {(recorderControls.isPausedRecording && !recorderControls.isPausedRecordedAudio) || (!recorderControls.isPausedRecording && recorderControls.isPausedRecordedAudio)? 
-              <FaPlay size='25px' color='white'/> : <IoIosPause size='25px' color='white'/>}
-            </button>
-          }
-          {
-            recorderControls.isRecordingInProgress || !recorderControls.isCleared?
-            <VoiceVisualizer
-              controls={recorderControls} 
-              isDefaultUIShown={false} 
-              isControlPanelShown={false} 
-              onlyRecording={false}
-              secondaryBarColor='white'
-              rounded={2}
-              height={50}
-              mainContainerClassName='audio-visualizer'
-              canvasContainerClassName='canvas-container'
-            />
-            : <input type="text" placeholder="Type a message..." className="message-input" value={input} onChange={(e) => setInput(e.target.value)}/>
-          }
-          {!recorderControls.isCleared &&
-            (<button className='message-input-btn' onClick={recorderControls.clearCanvas}>
-              <ImBin2 size='25px' color='white'/>
-            </button>)
-          }
-          <button className='message-input-btn'  onClick={sendMessage} >
-            <IoMdSend size='25px' color='white' />
-          </button>
-        </div>
+        {renderConStatus()}
       </div> : <div className='no-chat'>
         <p>Select a user to open inbox</p>
         </div>}       

@@ -28,7 +28,6 @@
 
 .name-image-container {
     display: flex;
-    align-items: flex-start;
     flex: 1;
     gap: 10px;
 }
@@ -40,8 +39,12 @@
     object-fit: cover;
 }
 
+.name-status {
+    margin-top: -5px;
+}
+
 .name-status h2 {
-    font-size: 22px;
+    font-size: 18px;
 }
 
 .name-status p {

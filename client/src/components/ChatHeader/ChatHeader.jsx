@@ -18,7 +18,7 @@ function ChatHeader({ user }) {
     if(unit === 'hour') return 'Active ' + value + 'h ' + 'ago'
     if(unit === 'day') return 'Active ' + value + 'd ' + 'ago'
     if(unit === 'week') return 'Active ' + value + 'w ' + 'ago'
-    if(unit === 'month') return 'Active ' + value + 'm ' + 'ago'
+    if(unit === 'month') return 'Active ' + Math.round(value * 4.345) + 'w ' + 'ago'
     if(unit === 'year') return 'Active ' + value + 'y ' + 'ago'
 }
 

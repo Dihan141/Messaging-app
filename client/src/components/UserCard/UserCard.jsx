@@ -14,7 +14,7 @@ function UserCard({ user, showLastMessage, lastMessage }) {
         if(unit === 'hour') return value + 'h'
         if(unit === 'day') return value + 'd'
         if(unit === 'week') return value + 'w'
-        if(unit === 'month') return value + 'm'
+        if(unit === 'month') return Math.round(value * 4.345) + 'w'
         if(unit === 'year') return value + 'y'
     }
 
@@ -24,7 +24,7 @@ function UserCard({ user, showLastMessage, lastMessage }) {
         if(unit === 'hour') return '- ' + value + 'h'
         if(unit === 'day') return '- ' + value + 'd'
         if(unit === 'week') return '- ' + value + 'w'
-        if(unit === 'month') return '- ' + value + 'm'
+        if(unit === 'month') return '- ' + Math.round(value * 4.345) + 'w'
         if(unit === 'year') return '- ' + value + 'y'
     }
 
@@ -40,7 +40,7 @@ function UserCard({ user, showLastMessage, lastMessage }) {
     <div className='user-card'>
         <div className="profile-container">
             <img src={user.profilePic || defaultImg} alt="Profile" className='profile-pic' />
-            { user.active ? <div className="active-status"></div> : <TimeAgo className='offline-status' date={user.lastActive} formatter={formattedActiveStatusString}/>}
+            { user.active ? <div className="active-status"></div> : <TimeAgo key={user._id} className='offline-status' date={user.lastActive} formatter={formattedActiveStatusString}/>}
         </div>
         {showLastMessage && message ? (
             <>
@@ -52,7 +52,7 @@ function UserCard({ user, showLastMessage, lastMessage }) {
                             {message.senderId === userInfo.user.newUser.id ? 'You: ': ''}
                             {message.messageType === 'audio' ? 'sent an audio message': message.content}
                         </p>
-                        <TimeAgo className='message-time' date={message && message.createdAt} formatter={
+                        <TimeAgo key={user._id} className='message-time' date={message && message.createdAt} formatter={
                             formattedString
                         }/>
                     </div>) 
